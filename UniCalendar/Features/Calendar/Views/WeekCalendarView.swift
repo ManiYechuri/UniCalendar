@@ -56,7 +56,6 @@ struct WeekCalendarView: View {
                         scrollToInitialHour(using: proxy)
                     }
                     .onChange(of: vm.selectedDate) { _ in
-                        // reload is already called inside vm.select(...); just adjust scroll position
                         scrollToInitialHour(using: proxy)
                     }
                     .sheet(item: $selectedEvent) { ev in
@@ -90,7 +89,11 @@ struct WeekCalendarView: View {
                 MoreEventsPopupView(
                     title: popupTitle(),
                     events: hiddenEventsOnly(),
-                    onClose: { dismissMorePopup() }
+                    onClose: { dismissMorePopup() },
+                    onSelect: { ev in
+                        selectedEvent = ev        // open details
+                        dismissMorePopup()        // close popup
+                    }
                 )
                 .transition(.scale.combined(with: .opacity))
                 .zIndex(2)
@@ -117,10 +120,21 @@ struct WeekCalendarView: View {
         .animation(.easeInOut(duration: 0.2), value: showPopup)
         .navigationBarHidden(true)
         .onAppear {
-            vm.reloadForSelectedDay()  // ensure fresh day-scoped data at view entry
+            vm.reloadForSelectedDay()
         }
         .onReceive(NotificationCenter.default.publisher(for: .eventsDidUpdate)) { _ in
-            vm.reloadForSelectedDay() // refresh when Core Data changes
+            vm.reloadForSelectedDay()
+        }
+        .sheet(item: $selectedEvent) { ev in
+            NavigationView {
+                EventDetailView(event: ev)
+                    .navigationBarTitle("", displayMode: .inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Close") { selectedEvent = nil }
+                        }
+                    }
+            }
         }
     }
 
