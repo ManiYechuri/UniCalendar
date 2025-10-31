@@ -7,44 +7,38 @@ struct ConnectGoogleSetupView: View {
     var body: some View {
         ZStack {
             Color.clear.ignoresSafeArea()
-
-            // Card
             VStack(spacing: 24) {
                 Spacer(minLength: 8)
 
-                // Google mark
                 ZStack {
                     Circle().fill(Color(.systemGray6))
                         .frame(width: 96, height: 96)
                     Image(systemName: "g.circle.fill")
                         .font(.system(size: 70))
-                        .foregroundColor(.red) // swap to your asset when you have it
+                        .foregroundColor(.red)
                         .opacity(0.85)
                 }
                 .padding(.top, 12)
 
-                // Title
                 VStack(spacing: 6) {
                     Text("Connect your")
-                        .font(.system(size: 28, weight: .heavy))
+                        .font(Typography.f18Bold)
                     Text("Google Account")
-                        .font(.system(size: 28, weight: .heavy))
+                        .font(Typography.f18Bold)
                 }
                 .multilineTextAlignment(.center)
 
-                // Body copy
                 Text("""
                 UniCal uses Google's secure service to connect your account. You will be redirected to a Google sign-in page to grant permission. UniCal will never see your password.
                 """)
-                .font(.subheadline)
+                .font(Typography.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 24)
 
-                // Primary CTA
                 Button(action: onContinue) {
                     Text("Continue to Google")
-                        .font(.headline)
+                        .font(Typography.f14SemiBold)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 16)
                         .background(RoundedRectangle(cornerRadius: 18).fill(Color.blue))
@@ -54,9 +48,8 @@ struct ConnectGoogleSetupView: View {
                 .padding(.horizontal, 24)
                 .padding(.top, 4)
 
-                // Secondary
                 Button("Cancel", action: onCancel)
-                    .font(.headline)
+                    .font(Typography.f12Regular)
                     .foregroundColor(.secondary)
                     .padding(.bottom, 8)
 
@@ -69,7 +62,7 @@ struct ConnectGoogleSetupView: View {
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .shadow(color: .black.opacity(0.18), radius: 20, x: 0, y: 10)
             .padding(.horizontal, 20)
-            .frame(maxWidth: 480) // looks nice on iPad too
+            .frame(maxWidth: 480)
         }
     }
 }

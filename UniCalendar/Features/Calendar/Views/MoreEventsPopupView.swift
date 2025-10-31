@@ -9,7 +9,7 @@ struct MoreEventsPopupView: View {
     var body: some View {
         VStack(spacing: 12) {
             HStack {
-                Text(title).font(.headline)
+                Text(title).font(Typography.f12Regular)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark.circle.fill").imageScale(.large)
@@ -33,17 +33,17 @@ struct MoreEventsPopupView: View {
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(ev.title)
-                                    .font(.subheadline.weight(.semibold))
+                                    .font(Typography.f14SemiBold)
                                     .foregroundColor(.primary)
                                     .lineLimit(2)
 
                                 Text(timeRange(ev))
-                                    .font(.footnote)
+                                    .font(Typography.footer)
                                     .foregroundColor(.secondary)
 
                                 if let loc = ev.location, !loc.isEmpty {
                                     Text(loc)
-                                        .font(.footnote)
+                                        .font(Typography.footer)
                                         .foregroundColor(.secondary)
                                         .lineLimit(1)
                                 }

@@ -19,7 +19,7 @@ struct SyncView: View {
             addAccountOverlay
             disconnectOverlay
         }
-        .navigationTitle("Sync")
+        //.navigationTitle("Sync")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { trailingPlus }
 
@@ -95,7 +95,7 @@ private extension SyncView {
 
     var sectionHeader: some View {
         Text("CONNECTED ACCOUNTS")
-            .font(.caption.weight(.semibold))
+            .font(Typography.f14SemiBold)
             .foregroundColor(.secondary)
             .padding(.horizontal, 16)
     }
@@ -106,7 +106,6 @@ private extension SyncView {
                 AccountRowView(account: account)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    // RIGHT-SWIPE -> show popup
                     .onRightSwipe {
                         accountPendingDisconnect = account
                         showDisconnect = true
@@ -169,8 +168,14 @@ private extension SyncView {
         }
     }
 
+    @ToolbarContentBuilder
     var trailingPlus: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
+          ToolbarItem(placement: .principal) {
+            Text("Sync")
+                  .font(Typography.f18Bold)
+                .foregroundStyle(.primary)
+        }
+         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 showAddSheet = true
                 onAddAccount?()
@@ -219,7 +224,6 @@ private extension SyncView {
 
 extension SyncAccount {
     init(entity e: AccountEntity) {
-        // Provider mapping from Core Data string
         let provider: CalendarProvider = {
             switch (e.provider ?? "").lowercased() {
             case "outlook": return .outlook
@@ -234,7 +238,7 @@ extension SyncAccount {
             if s == "error" { return .error }
             if s == "syncing" { return .syncing }
             if s == "connected" || e.isConnected == true { return .connected }
-            return .connected // safe default so row shows as connected if data is partial
+            return .connected
         }()
 
         self.init(

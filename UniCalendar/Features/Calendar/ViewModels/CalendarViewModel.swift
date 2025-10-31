@@ -18,14 +18,14 @@ final class CalendarViewModel: ObservableObject {
 
     init() {
         visibleWeekAnchor = Date()
-        reloadForSelectedDay()
+        reloadForSelectedDay_async()
         NotificationCenter.default.publisher(for: .eventsDidUpdate)
-            .sink { [weak self] _ in self?.reloadForSelectedDay() }
+            .sink { [weak self] _ in self?.reloadForSelectedDay_async() }
             .store(in: &bag)
 
         $sourceFilter
             .dropFirst()
-            .sink { [weak self] _ in self?.reloadForSelectedDay() }
+            .sink { [weak self] _ in self?.reloadForSelectedDay_async() }
             .store(in: &bag)
     }
 
@@ -47,7 +47,7 @@ final class CalendarViewModel: ObservableObject {
         guard !normalized.isSameDay(as: selectedDate) else { return }
         selectedDate = normalized
         visibleWeekAnchor = normalized
-        reloadForSelectedDay()
+        reloadForSelectedDay_async()
     }
 
     func goToPreviousWeek() {
@@ -66,25 +66,23 @@ final class CalendarViewModel: ObservableObject {
         }
     }
 
-    func reloadForSelectedDay() {
-        let cal = Calendar.app
-        let start = selectedDate.startOfDayApp
+    func reloadForSelectedDay_async() {
+        let cal = Calendar(identifier: .gregorian)
+        let start = cal.startOfDay(for: selectedDate)
         let end = cal.date(byAdding: .day, value: 1, to: start)!
         let window = DateInterval(start: start, end: end)
-
-        var events = EventStorage.shared.fetch(in: window, accounts: nil)
-
-        events = events.filter { ev in
-            DateInterval(start: ev.start, end: ev.end).intersects(window)
+        
+        EventStorage.shared.fetchAsync(in: window, accounts: nil) { [weak self] events in
+            guard let self else { return }
+            var filtered = events
+            switch self.sourceFilter {
+            case .all: break
+            case .google:  filtered = filtered.filter { $0.source == .google }
+            case .outlook: filtered = filtered.filter { $0.source == .outlook }
+            }
+            self.dayEvents = filtered.sorted { $0.start < $1.start }
         }
-
-        switch sourceFilter {
-        case .all: break
-        case .google: events = events.filter { $0.source == .google }
-        case .outlook: events = events.filter { $0.source == .outlook }
-        }
-
-        dayEvents = events.sorted { $0.start < $1.start }
     }
+
 }
 

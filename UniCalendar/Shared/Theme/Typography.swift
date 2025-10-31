@@ -14,5 +14,9 @@ enum Typography {
     static let bodyMedium = Font.custom(regular, size: 16)
     static let subheadline = Font.custom(medium, size: 14)
     static let footer = Font.custom(medium, size: 10)
+    static let f35 = Font.custom(semibold, size: 35)
+    static let f18Bold = Font.custom(bold, size: 18)
+    static let f14SemiBold = Font.custom(semibold, size: 14)
+    static let f12Regular = Font.custom(regular, size: 12)
 }
 

@@ -13,7 +13,7 @@ struct EventDetailView: View {
             VStack(alignment: .leading, spacing: 20) {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(event.title)
-                        .font(.system(size: 34, weight: .heavy))
+                        .font(Typography.f35)
                         .fixedSize(horizontal: false, vertical: true)
 
                     HStack(spacing: 8) {
@@ -130,12 +130,12 @@ private struct InfoRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.body)
+                    .font(Typography.subheadline)
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 if let subtitle {
                     Text(subtitle)
-                        .font(.footnote)
+                        .font(Typography.subheadline)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
@@ -156,7 +156,7 @@ private struct SourceTag: View {
     let color: Color
     var body: some View {
         Text(source == .google ? "Google" : "Outlook")
-            .font(.footnote.weight(.semibold))
+            .font(Typography.f14SemiBold)
             .padding(.vertical, 6)
             .padding(.horizontal, 10)
             .background(Capsule().fill(color.opacity(0.12)))

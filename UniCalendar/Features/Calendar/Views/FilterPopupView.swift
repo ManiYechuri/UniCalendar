@@ -10,7 +10,7 @@ struct FilterPopupView: View {
             // Header
             HStack {
                 Text("Filter Events")
-                    .font(.headline.weight(.semibold))
+                    .font(Typography.h2)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
@@ -21,10 +21,9 @@ struct FilterPopupView: View {
             .padding(.horizontal, 20)
             .padding(.top, 16)
 
-            // Section
             VStack(alignment: .leading, spacing: 12) {
                 Text("CALENDAR SOURCE")
-                    .font(.caption.weight(.semibold))
+                    .font(Typography.subheadline)
                     .foregroundColor(.secondary)
 
                 HStack(spacing: 12) {
@@ -46,10 +45,9 @@ struct FilterPopupView: View {
             }
             .padding(.horizontal, 20)
 
-            // Apply button
             Button(action: onApply) {
                 Text("Apply Filter")
-                    .font(.headline)
+                    .font(Typography.f18Bold)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(RoundedRectangle(cornerRadius: 14).fill(Color.blue))
@@ -101,7 +99,7 @@ private struct SelectablePill: View {
                 if let leftDot {
                     Circle().fill(leftDot).frame(width: 8, height: 8)
                 }
-                Text(title).font(.body.weight(.semibold))
+                Text(title).font(Typography.bodyMedium)
                 Spacer()
             }
             .padding(.horizontal, 16)

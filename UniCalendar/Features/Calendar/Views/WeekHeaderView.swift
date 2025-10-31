@@ -16,7 +16,7 @@ struct WeekHeaderView: View {
                 Button(action: onPrev) { Image(systemName: "chevron.left").font(.title3) }
                 Button(action: onAdd)  { Image(systemName: "plus").font(.title3) }
                 Spacer()
-                Text(monthTitle).font(.title2.weight(.bold))
+                Text(monthTitle).font(Typography.f18Bold)
                 Spacer()
                 Button(action: onSettings) { Image(systemName: "gearshape").font(.title3) }
                 Button(action: onNext) { Image(systemName: "chevron.right").font(.title3) }

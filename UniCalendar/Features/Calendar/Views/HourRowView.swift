@@ -16,7 +16,7 @@ struct HourRowView: View {
         HStack(alignment: .top, spacing: 8) {
             VStack(alignment: .trailing, spacing: 4) {
                 Text(label(for: hour))
-                    .font(.caption)
+                    .font(Typography.f12Regular)
                     .foregroundColor(.secondary)
                     .frame(width: 52, alignment: .trailing)
                 Rectangle().fill(Color(.systemGray5)).frame(height: 1)
@@ -45,7 +45,8 @@ struct HourRowView: View {
                             onMoreTapped(hour, events)
                         } label: {
                             Text("+\(remaining) more")
-                                .font(.footnote.weight(.semibold))
+                            
+                                .font(Typography.f12Regular)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
                                 .background(Capsule().fill(Color(.systemGray5)))

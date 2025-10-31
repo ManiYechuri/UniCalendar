@@ -120,10 +120,10 @@ struct WeekCalendarView: View {
         .animation(.easeInOut(duration: 0.2), value: showPopup)
         .navigationBarHidden(true)
         .onAppear {
-            vm.reloadForSelectedDay()
+            vm.reloadForSelectedDay_async()
         }
         .onReceive(NotificationCenter.default.publisher(for: .eventsDidUpdate)) { _ in
-            vm.reloadForSelectedDay()
+            vm.reloadForSelectedDay_async()
         }
         .sheet(item: $selectedEvent) { ev in
             NavigationView {

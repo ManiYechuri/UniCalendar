@@ -11,7 +11,6 @@ struct EventListRowCard: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(fill)
 
-            // left spine
             HStack(spacing: 0) {
                 Rectangle().fill(accent).frame(width: 8)
                 Spacer(minLength: 0)
@@ -22,7 +21,7 @@ struct EventListRowCard: View {
                 Text(event.title)
                     .font(.headline.weight(.semibold))
                 Text(timeRange(event))
-                    .font(.footnote)
+                    .font(Typography.footer)
                     .foregroundColor(.secondary)
             }
             .padding(.vertical, 12)

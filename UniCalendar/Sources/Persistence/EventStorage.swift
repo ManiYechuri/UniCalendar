@@ -246,3 +246,80 @@ final class EventStorage {
     }
 }
 
+private struct EventRowDTO {
+    let title: String
+    let location: String?
+    let start: Date
+    let end: Date
+    let color: String
+    let source: String
+}
+
+// MARK: - Async, non-blocking fetch for UI (use this in view models)
+extension EventStorage {
+
+    /// Background fetch with batching and a narrow property set.
+    /// Calls `completion` on the main thread with mapped `CalendarEvent`s.
+    func fetchAsync(in range: DateInterval,
+                    accounts: [String]? = nil,
+                    completion: @escaping ([CalendarEvent]) -> Void) {
+        let lowered = accounts?.map { $0.lowercased() }
+
+        bgContext.perform {
+            let req = NSFetchRequest<NSManagedObject>(entityName: "EventEntity")
+
+            var preds: [NSPredicate] = [
+                NSPredicate(format: "start >= %@ AND start < %@", range.start as NSDate, range.end as NSDate)
+            ]
+            if let lowered, !lowered.isEmpty {
+                preds.append(NSPredicate(format: "accountEmail IN %@", lowered))
+            }
+            req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: preds)
+
+            // Perf knobs
+            req.fetchBatchSize = 200
+            req.returnsObjectsAsFaults = true
+            req.includesPropertyValues = true
+            req.propertiesToFetch = ["title", "location", "start", "end", "color", "source"]
+            req.resultType = .managedObjectResultType
+            req.sortDescriptors = [NSSortDescriptor(key: "start", ascending: true)]
+
+            guard let rows = try? self.bgContext.fetch(req) else {
+                DispatchQueue.main.async { completion([]) }
+                return
+            }
+
+            // Map to DTOs on background
+            let dtos: [EventRowDTO] = rows.compactMap { obj in
+                guard
+                    let start = obj.value(forKey: "start") as? Date,
+                    let end   = obj.value(forKey: "end")   as? Date
+                else { return nil }
+                return EventRowDTO(
+                    title: (obj.value(forKey: "title") as? String) ?? "(No Title)",
+                    location: obj.value(forKey: "location") as? String,
+                    start: start,
+                    end: end,
+                    color: (obj.value(forKey: "color") as? String) ?? "blue",
+                    source: (obj.value(forKey: "source") as? String) ?? "google"
+                )
+            }
+
+            // Convert to app model
+            let events: [CalendarEvent] = dtos.map {
+                CalendarEvent(
+                    title: $0.title,
+                    location: $0.location,
+                    start: $0.start,
+                    end: $0.end,
+                    color: ($0.color == "red") ? .red : .blue,
+                    source: ($0.source == "outlook") ? .outlook : .google
+                )
+            }
+
+            DispatchQueue.main.async { completion(events) }
+        }
+    }
+}
+
+

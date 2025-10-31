@@ -10,7 +10,7 @@ struct IconTile: View {
                 .frame(width: 80, height: 80)
 
             Image(systemName: systemName)
-                .font(.system(size: 35, weight: .semibold))
+                .font(Typography.f35)
                 .foregroundColor(Color(.label))
                 .accessibilityHidden(true)
         }

@@ -5,29 +5,26 @@ struct AccountRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Avatar (use real logo assets if you have them)
             ZStack {
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
                     .fill(Color(.systemGray5))
                     .frame(width: 40, height: 40)
                 account.provider.icon
                     .foregroundColor(account.provider.tint)
-                    .font(.system(size: 20, weight: .bold))
+                    .font(Typography.f18Bold)
             }
             .frame(width: 44, height: 44)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.email)
-                    .font(.body.weight(.semibold))
+                    .font(Typography.f14SemiBold)
                     .lineLimit(1)
                     .truncationMode(.tail)
                 Text(account.provider.rawValue)
-                    .font(.footnote)
+                    .font(Typography.footer)
                     .foregroundColor(.secondary)
             }
-
             Spacer()
-
             StatusDot(status: account.status)
         }
     }

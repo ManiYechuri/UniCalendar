@@ -2,14 +2,13 @@ import SwiftUI
 
 struct DayColumnView: View {
     let dayEvents: [CalendarEvent]
-    let hourHeight: CGFloat       // e.g. 64
-    let dayStartHour = 0          // 24h
+    let hourHeight: CGFloat
+    let dayStartHour = 0          
 
     var body: some View {
         GeometryReader { geo in
             let laid = layoutOverlapping(dayEvents)
             ZStack(alignment: .topLeading) {
-                // background column + vertical guide
                 Rectangle().fill(Color(.systemGray6)).cornerRadius(12).opacity(0.45)
                     .overlay(Rectangle().fill(Color(.systemGray4)).frame(width: 1), alignment: .trailing)
 

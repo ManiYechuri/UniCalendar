@@ -7,11 +7,10 @@ struct AddAccountPopupView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header
             HStack {
                 Spacer()
                 Text("Connect New Account")
-                    .font(.headline.weight(.semibold))
+                    .font(Typography.f18Bold)
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
@@ -25,14 +24,12 @@ struct AddAccountPopupView: View {
             .padding(.bottom, 10)
 
             Divider()
-
-            // Buttons
             VStack(spacing: 12) {
                 Button(action: onConnectGoogle) {
                     HStack(spacing: 12) {
                         providerBadge(color: .red, letter: "G")
                         Text("Connect with Google")
-                            .font(.headline)
+                            .font(Typography.f14SemiBold)
                         Spacer()
                     }
                     .padding(.horizontal, 14)
@@ -46,7 +43,7 @@ struct AddAccountPopupView: View {
                     HStack(spacing: 12) {
                         providerBadge(color: .blue, letter: "O")
                         Text("Connect with Microsoft Outlook")
-                            .font(.headline)
+                            .font(Typography.f14SemiBold)
                         Spacer()
                     }
                     .padding(.horizontal, 14)
@@ -77,7 +74,7 @@ struct AddAccountPopupView: View {
                 .foregroundColor(.white)
         }
         .frame(width: 36, height: 36)
-        .background(Circle().fill(color.opacity(0.001))) // expand hit area
+        .background(Circle().fill(color.opacity(0.001)))
     }
 }
 

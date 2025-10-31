@@ -29,7 +29,7 @@ public struct IconBadge: View {
             Circle().fill(Color(.systemGray6))
             icon
                 .foregroundColor(tint)
-                .font(.system(size: 18, weight: .bold))
+                .font(Typography.f18Bold)
         }
         .frame(width: 40, height: 40)
     }
@@ -78,7 +78,7 @@ public struct SettingRow: View {
                     }
                     if let subtitle {
                         Text(subtitle)
-                            .font(.footnote)
+                            .font(Typography.footer)
                             .foregroundColor(.secondary)
                     }
                 }

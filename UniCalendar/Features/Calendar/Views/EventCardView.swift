@@ -13,8 +13,9 @@ struct EventCardView: View {
                 .stroke(accent, lineWidth: 6)
                 .mask(Rectangle().frame(width: 10).offset(x: -6))
             VStack(alignment: .leading, spacing: 4) {
-                Text(event.title).font(.headline.weight(.semibold))
-                if let loc = event.location { Text(loc).font(.subheadline).foregroundColor(.secondary) }
+                Text(event.title).font(.headline.weight(.ultraLight))
+                if let loc = event.location {
+                    Text(loc).font(.subheadline).foregroundColor(.secondary) }
             }
             .padding(12)
         }

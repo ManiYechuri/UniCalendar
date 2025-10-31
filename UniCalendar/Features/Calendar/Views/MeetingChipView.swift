@@ -6,7 +6,7 @@ struct MeetingChipView: View {
 
     var body: some View {
         Text(title)
-            .font(.subheadline.weight(.medium))
+            .font(Typography.f12Regular)
             .lineLimit(1)
             .truncationMode(.tail)
             .padding(.horizontal, 12)
