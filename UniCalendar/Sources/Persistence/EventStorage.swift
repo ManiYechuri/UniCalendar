@@ -240,5 +240,9 @@ final class EventStorage {
         let e = parse.isoWithFrac.date(from: eRaw ?? "") ?? parse.isoBasic.date(from: eRaw ?? "")
         return (s, e)
     }
+    
+    func deleteAll(forAccountEmail email: String) {
+        deleteAllEvents(forAccountEmail: email)
+    }
 }
 

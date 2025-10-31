@@ -33,5 +33,9 @@ final class GoogleAccountStore {
         UserDefaults.standard.removeObject(forKey: key)
         print("🧹 Cleared all Google sync tokens")
     }
+    
+    func clearSyncToken(for email: String) {
+        removeSyncToken(for: email)
+    }
 }
 

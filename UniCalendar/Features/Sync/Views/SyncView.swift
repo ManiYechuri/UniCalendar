@@ -2,12 +2,7 @@ import SwiftUI
 
 struct SyncView: View {
     // MARK: - State
-    @State private var accounts: [SyncAccount] = [
-        .init(email: "alex.morgan@gmail.com",     provider: .google,  status: .error),
-        .init(email: "a.morgan@outlook.com",      provider: .outlook, status: .connected),
-        .init(email: "alex.work@unical.dev",      provider: .google,  status: .connected),
-        .init(email: "personal.stuff@hotmail.com",provider: .outlook, status: .connected),
-    ]
+    @State private var accounts: [SyncAccount] = []
 
     var onAddAccount: (() -> Void)? = nil
     @State private var showAddSheet = false
@@ -27,28 +22,25 @@ struct SyncView: View {
         .navigationTitle("Sync")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { trailingPlus }
+
         .sheet(isPresented: $showGoogleSetup) {
             ConnectGoogleSetupView(
                 onContinue: {
                     showGoogleSetup = false
-                    startGoogleConnect()      // kick off ASWebAuthenticationSession / SDK
+                    startGoogleConnect()
                 },
-                onCancel: {
-                    showGoogleSetup = false
-                }
+                onCancel: { showGoogleSetup = false }
             )
-            .presentationDetents([.medium])    // tweak: .large if you prefer
+            .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
         }
         .sheet(isPresented: $showOutlookSetup) {
             ConnectOutlookSetupView(
                 onContinue: {
                     showOutlookSetup = false
-                    startOutlookConnect()   // kick off MS OAuth (ASWebAuthenticationSession / MSAL)
+                    startOutlookConnect()
                 },
-                onCancel: {
-                    showOutlookSetup = false
-                }
+                onCancel: { showOutlookSetup = false }
             )
             .presentationDetents([.medium])
             .presentationDragIndicator(.visible)
@@ -56,6 +48,12 @@ struct SyncView: View {
 
         .animation(.easeInOut(duration: 0.2), value: showAddSheet)
         .animation(.easeInOut(duration: 0.2), value: showDisconnect)
+
+        // Load & auto-refresh from storage
+        .onAppear(perform: loadAccounts)
+        .onReceive(NotificationCenter.default.publisher(for: .accountsDidChange)) { _ in
+            loadAccounts()
+        }
     }
 }
 
@@ -69,7 +67,26 @@ private extension SyncView {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 sectionHeader
-                accountsCard
+
+                if accounts.isEmpty {
+                    // Empty state card
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("No accounts connected")
+                            .font(.headline)
+                        Text("Tap + to connect Google or Outlook and start syncing your calendars.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16)
+                            .fill(Color(.systemBackground))
+                            .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
+                    )
+                    .padding(.horizontal, 16)
+                } else {
+                    accountsCard
+                }
             }
             .padding(.bottom, 20)
         }
@@ -119,11 +136,11 @@ private extension SyncView {
                         onClose: { showAddSheet = false },
                         onConnectGoogle: {
                             showAddSheet = false
-                            showGoogleSetup = true       // <-- open setup screen
+                            showGoogleSetup = true
                         },
                         onConnectOutlook: {
                             showAddSheet = false
-                            showOutlookSetup = true   // open the Outlook setup card
+                            showOutlookSetup = true
                         }
                     )
                 }
@@ -167,10 +184,15 @@ private extension SyncView {
     }
 }
 
-// MARK: - Actions
+// MARK: - Actions / Data
 private extension SyncView {
     func startGoogleConnect() { print("Google OAuth…") }
     func startOutlookConnect() { print("Outlook OAuth…") }
+
+    func loadAccounts() {
+        let entities = AccountStorage.shared.connectedAccounts()
+        self.accounts = entities.map(SyncAccount.init(entity:))
+    }
 
     func dismissDisconnect() {
         showDisconnect = false
@@ -181,9 +203,44 @@ private extension SyncView {
 
     func confirmDisconnect() {
         guard let toRemove = accountPendingDisconnect else { return }
-        accounts.removeAll { $0.id == toRemove.id }
+
+        AccountStorage.shared.markDisconnected(email: toRemove.email)
+        EventStorage.shared.deleteAll(forAccountEmail: toRemove.email)
+        GoogleAccountStore.shared.clearSyncToken(for: toRemove.email)
+
+        loadAccounts()
         dismissDisconnect()
-        // TODO: revoke tokens / clear cached events
+
+        NotificationCenter.default.post(name: .accountsDidChange, object: nil)
+        NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
     }
+
 }
 
+extension SyncAccount {
+    init(entity e: AccountEntity) {
+        // Provider mapping from Core Data string
+        let provider: CalendarProvider = {
+            switch (e.provider ?? "").lowercased() {
+            case "outlook": return .outlook
+            case "google":  return .google
+            default:        return .google
+            }
+        }()
+
+        // Status mapping: prefer explicit status, fall back to isConnected
+        let status: SyncStatus = {
+            let s = (e.status ?? "").lowercased()
+            if s == "error" { return .error }
+            if s == "syncing" { return .syncing }
+            if s == "connected" || e.isConnected == true { return .connected }
+            return .connected // safe default so row shows as connected if data is partial
+        }()
+
+        self.init(
+            email: (e.email ?? "").lowercased(),
+            provider: provider,
+            status: status
+        )
+    }
+}

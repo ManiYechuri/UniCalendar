@@ -3,14 +3,14 @@ import SwiftUI
 enum CalendarProvider: String, Codable, CaseIterable {
     case google = "Google"
     case outlook = "Outlook"
-
+    
     var icon: Image {
         switch self {
-        case .google:  return Image(systemName: "g.circle.fill")   // swap with asset if you have one
+        case .google:  return Image(systemName: "g.circle.fill")
         case .outlook: return Image(systemName: "o.circle.fill")
         }
     }
-
+    
     var tint: Color {
         switch self {
         case .google:  return .red

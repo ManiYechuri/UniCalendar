@@ -7,14 +7,6 @@ final class AccountStorage {
     private let context = PersistenceController.shared.container.viewContext
     private init() {}
     
-    // MARK: - Fetch
-    
-    func connectedAccounts() -> [AccountEntity] {
-        let req: NSFetchRequest<AccountEntity> = AccountEntity.fetchRequest()
-        
-        return (try? context.fetch(req)) ?? []
-    }
-    
     func account(byEmail email: String) -> AccountEntity? {
         let req: NSFetchRequest<AccountEntity> = AccountEntity.fetchRequest()
         req.fetchLimit = 1
@@ -95,8 +87,6 @@ final class AccountStorage {
                     a.connectedAt = Date()
                     mutated = true
                 }
-
-                // If `isConnected` is optional, set default when missing
                 if a.value(forKey: "isConnected") == nil {
                     a.setValue(true, forKey: "isConnected")
                     mutated = true
@@ -107,9 +97,28 @@ final class AccountStorage {
                     mutated = true
                 }
             }
-
             if mutated { save() }
         }
+    }
+
+    func connectedAccounts() -> [AccountEntity] {
+        let req: NSFetchRequest<AccountEntity> = AccountEntity.fetchRequest()
+        // Show only connected rows (works with either `status` or `isConnected`)
+        req.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "status == %@", "connected"),
+            NSPredicate(format: "isConnected == YES")
+        ])
+        return (try? context.fetch(req)) ?? []
+    }
+
+    // MARK: - Mark disconnected (keep row, update flags)
+    func markDisconnected(email: String) {
+        let e = email.lowercased()
+        guard let obj = account(byEmail: e) else { return }
+        obj.isConnected = false
+        obj.status = "disconnected"
+        obj.connectedAt = obj.connectedAt ?? Date() // keep a value to satisfy "required" if any
+        save()
     }
 
 }
