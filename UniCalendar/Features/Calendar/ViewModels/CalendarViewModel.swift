@@ -3,33 +3,26 @@ import Combine
 
 @MainActor
 final class CalendarViewModel: ObservableObject {
-    // MARK: UI config
     let rowHeight: CGFloat = 64
     let hoursRange = 0...23
 
-    // MARK: Filters
-    enum SourceFilter: CaseIterable {
-        case all, google, outlook
-    }
-
+    enum SourceFilter: CaseIterable { case all, google, outlook }
     @Published var sourceFilter: SourceFilter = .all
 
-    // MARK: Selection
     @Published var selectedDate: Date = Date().startOfDayApp
+    @Published private(set) var visibleWeekAnchor: Date = Date()
+
     @Published private(set) var dayEvents: [CalendarEvent] = []
 
     private var bag = Set<AnyCancellable>()
 
     init() {
-        // First load for today
+        visibleWeekAnchor = Date()
         reloadForSelectedDay()
-
-        // Reload when Core Data posts updates
         NotificationCenter.default.publisher(for: .eventsDidUpdate)
             .sink { [weak self] _ in self?.reloadForSelectedDay() }
             .store(in: &bag)
 
-        // If the filter changes, re-query
         $sourceFilter
             .dropFirst()
             .sink { [weak self] _ in self?.reloadForSelectedDay() }
@@ -37,33 +30,32 @@ final class CalendarViewModel: ObservableObject {
     }
 
     // MARK: Header helpers
-
     var titleString: String {
         let f = DateFormatter()
         f.dateFormat = "MMMM yyyy"
-        return f.string(from: selectedDate)
+        return f.string(from: visibleWeekAnchor)
     }
 
     func daysInWeek() -> [Date] {
         let cal = Calendar.app
-        let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: selectedDate))!
+        let weekStart = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: visibleWeekAnchor))!
         return (0..<7).compactMap { cal.date(byAdding: .day, value: $0, to: weekStart) }
     }
 
     func select(date: Date) {
-        guard !date.isSameDay(as: selectedDate) else { return }
-        selectedDate = date.startOfDayApp
+        let normalized = date.startOfDayApp
+        guard !normalized.isSameDay(as: selectedDate) else { return }
+        selectedDate = normalized
+        visibleWeekAnchor = normalized
         reloadForSelectedDay()
     }
 
     func goToPreviousWeek() {
-        selectedDate = Calendar.app.date(byAdding: .day, value: -7, to: selectedDate)!.startOfDayApp
-        reloadForSelectedDay()
+        visibleWeekAnchor = Calendar.app.date(byAdding: .day, value: -7, to: visibleWeekAnchor) ?? visibleWeekAnchor
     }
 
     func goToNextWeek() {
-        selectedDate = Calendar.app.date(byAdding: .day, value: 7, to: selectedDate)!.startOfDayApp
-        reloadForSelectedDay()
+        visibleWeekAnchor = Calendar.app.date(byAdding: .day, value: 7, to: visibleWeekAnchor) ?? visibleWeekAnchor
     }
 
     // MARK: Day-scoped events
@@ -80,22 +72,16 @@ final class CalendarViewModel: ObservableObject {
         let end = cal.date(byAdding: .day, value: 1, to: start)!
         let window = DateInterval(start: start, end: end)
 
-        // Fetch from storage (you likely already have this API)
         var events = EventStorage.shared.fetch(in: window, accounts: nil)
 
-        // Keep only events that overlap the selected day (protects cross-midnight events)
         events = events.filter { ev in
             DateInterval(start: ev.start, end: ev.end).intersects(window)
         }
 
-        // Apply source filter
         switch sourceFilter {
-        case .all:
-            break
-        case .google:
-            events = events.filter { $0.source == .google }
-        case .outlook:
-            events = events.filter { $0.source == .outlook }
+        case .all: break
+        case .google: events = events.filter { $0.source == .google }
+        case .outlook: events = events.filter { $0.source == .outlook }
         }
 
         dayEvents = events.sorted { $0.start < $1.start }
