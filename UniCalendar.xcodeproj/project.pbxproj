@@ -1,0 +1,791 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D3C6DAB318B50D59BB2BE7B7 /* Pods_UniCalendar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C2BCF2A070D44B6E6E90CF9 /* Pods_UniCalendar.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1BB7FDDC2EB0D217008AC2DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BB7FDBE2EB0D215008AC2DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BB7FDC52EB0D215008AC2DF;
+			remoteInfo = UniCalendar;
+		};
+		1BB7FDE62EB0D217008AC2DF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BB7FDBE2EB0D215008AC2DF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1BB7FDC52EB0D215008AC2DF;
+			remoteInfo = UniCalendar;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		1B46039E2EB247E90067475E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		1BB7FDC62EB0D215008AC2DF /* UniCalendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UniCalendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BB7FDDB2EB0D217008AC2DF /* UniCalendarTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UniCalendarTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1BB7FDE52EB0D217008AC2DF /* UniCalendarUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UniCalendarUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D2F62FFAA5F37C60EA57ABE /* Pods-UniCalendar.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UniCalendar.release.xcconfig"; path = "Target Support Files/Pods-UniCalendar/Pods-UniCalendar.release.xcconfig"; sourceTree = "<group>"; };
+		987BCC1448D9669425904278 /* Pods-UniCalendar.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UniCalendar.debug.xcconfig"; path = "Target Support Files/Pods-UniCalendar/Pods-UniCalendar.debug.xcconfig"; sourceTree = "<group>"; };
+		9C2BCF2A070D44B6E6E90CF9 /* Pods_UniCalendar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_UniCalendar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1BB7FDFF2EB0E2AF008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendarTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/AppRouter.swift,
+				App/LaunchView.swift,
+				App/UniCalendarApp.swift,
+				Features/Auth/Components/IconTile.swift,
+				Features/Auth/Components/SocialSignInButton.swift,
+				Features/Auth/Components/TermsFooter.swift,
+				Features/Auth/Models/AuthState.swift,
+				Features/Auth/Models/GoogleEventModels.swift,
+				Features/Auth/Services/AuthService.swift,
+				Features/Auth/Services/GoogleAccountStore.swift,
+				Features/Auth/Services/GoogleAuthService.swift,
+				Features/Auth/Services/MicrosoftAuthService.swift,
+				Features/Auth/ViewModels/AuthViewModel.swift,
+				Features/Auth/Views/LoginView.swift,
+				Features/Calendar/Models/CalendarEvent.swift,
+				"Features/Calendar/Utils/Date+CalendarUtils.swift",
+				Features/Calendar/Utils/OverlapLayout.swift,
+				Features/Calendar/ViewModels/CalendarViewModel.swift,
+				Features/Calendar/Views/DayColumnView.swift,
+				Features/Calendar/Views/EventBubbleView.swift,
+				Features/Calendar/Views/EventCardView.swift,
+				Features/Calendar/Views/EventDetailView.swift,
+				Features/Calendar/Views/EventListRowCard.swift,
+				Features/Calendar/Views/FilterPopupView.swift,
+				Features/Calendar/Views/HourRowView.swift,
+				Features/Calendar/Views/MeetingChipView.swift,
+				Features/Calendar/Views/MoreEventsPopupView.swift,
+				Features/Calendar/Views/TimelineGridView.swift,
+				Features/Calendar/Views/WeekCalendarView.swift,
+				Features/Calendar/Views/WeekHeaderView.swift,
+				Features/Home/Views/HomeTabsView.swift,
+				Features/Settings/Components/SettingsUIComponents.swift,
+				Features/Settings/Views/NotificationSettingsView.swift,
+				Features/Settings/Views/SettingsView.swift,
+				Features/Sync/Models/SyncAccount.swift,
+				Features/Sync/Views/AccountPopupView.swift,
+				Features/Sync/Views/AccountRowView.swift,
+				Features/Sync/Views/CenterAlertView.swift,
+				Features/Sync/Views/ConnectGoogleSetupView.swift,
+				Features/Sync/Views/ConnectOutlookSetupView.swift,
+				Features/Sync/Views/OnRightSwipe.swift,
+				Features/Sync/Views/SyncView.swift,
+				"Resources/Fonts/Montserrat-Bold.ttf",
+				"Resources/Fonts/Montserrat-Medium.ttf",
+				"Resources/Fonts/Montserrat-Regular.ttf",
+				"Resources/Fonts/Montserrat-SemiBold.ttf",
+				Shared/Extensions/Notification.swift,
+				"Shared/Extensions/View+If.swift",
+				Shared/Theme/Spacing.swift,
+				Shared/Theme/Typography.swift,
+				Sources/Persistence/AccountStorage.swift,
+				Sources/Persistence/EventStorage.swift,
+				Sources/Persistence/SyncManager.swift,
+			);
+			target = 1BB7FDDA2EB0D217008AC2DF /* UniCalendarTests */;
+		};
+		1BB7FE002EB0E2AF008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendarUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				App/AppRouter.swift,
+				App/LaunchView.swift,
+				App/UniCalendarApp.swift,
+				Features/Auth/Components/IconTile.swift,
+				Features/Auth/Components/SocialSignInButton.swift,
+				Features/Auth/Components/TermsFooter.swift,
+				Features/Auth/Models/AuthState.swift,
+				Features/Auth/Models/GoogleEventModels.swift,
+				Features/Auth/Services/AuthService.swift,
+				Features/Auth/Services/GoogleAccountStore.swift,
+				Features/Auth/Services/GoogleAuthService.swift,
+				Features/Auth/Services/MicrosoftAuthService.swift,
+				Features/Auth/ViewModels/AuthViewModel.swift,
+				Features/Auth/Views/LoginView.swift,
+				Features/Calendar/Models/CalendarEvent.swift,
+				"Features/Calendar/Utils/Date+CalendarUtils.swift",
+				Features/Calendar/Utils/OverlapLayout.swift,
+				Features/Calendar/ViewModels/CalendarViewModel.swift,
+				Features/Calendar/Views/DayColumnView.swift,
+				Features/Calendar/Views/EventBubbleView.swift,
+				Features/Calendar/Views/EventCardView.swift,
+				Features/Calendar/Views/EventDetailView.swift,
+				Features/Calendar/Views/EventListRowCard.swift,
+				Features/Calendar/Views/FilterPopupView.swift,
+				Features/Calendar/Views/HourRowView.swift,
+				Features/Calendar/Views/MeetingChipView.swift,
+				Features/Calendar/Views/MoreEventsPopupView.swift,
+				Features/Calendar/Views/TimelineGridView.swift,
+				Features/Calendar/Views/WeekCalendarView.swift,
+				Features/Calendar/Views/WeekHeaderView.swift,
+				Features/Home/Views/HomeTabsView.swift,
+				Features/Settings/Components/SettingsUIComponents.swift,
+				Features/Settings/Views/NotificationSettingsView.swift,
+				Features/Settings/Views/SettingsView.swift,
+				Features/Sync/Models/SyncAccount.swift,
+				Features/Sync/Views/AccountPopupView.swift,
+				Features/Sync/Views/AccountRowView.swift,
+				Features/Sync/Views/CenterAlertView.swift,
+				Features/Sync/Views/ConnectGoogleSetupView.swift,
+				Features/Sync/Views/ConnectOutlookSetupView.swift,
+				Features/Sync/Views/OnRightSwipe.swift,
+				Features/Sync/Views/SyncView.swift,
+				"Resources/Fonts/Montserrat-Bold.ttf",
+				"Resources/Fonts/Montserrat-Medium.ttf",
+				"Resources/Fonts/Montserrat-Regular.ttf",
+				"Resources/Fonts/Montserrat-SemiBold.ttf",
+				Shared/Extensions/Notification.swift,
+				"Shared/Extensions/View+If.swift",
+				Shared/Theme/Spacing.swift,
+				Shared/Theme/Typography.swift,
+				Sources/Persistence/AccountStorage.swift,
+				Sources/Persistence/EventStorage.swift,
+				Sources/Persistence/SyncManager.swift,
+			);
+			target = 1BB7FDE42EB0D217008AC2DF /* UniCalendarUITests */;
+		};
+		1BB7FEBF2EB0F99E008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendar" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 1BB7FDC52EB0D215008AC2DF /* UniCalendar */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1BB7FDC82EB0D215008AC2DF /* UniCalendar */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1BB7FEBF2EB0F99E008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendar" target */,
+				1BB7FDFF2EB0E2AF008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendarTests" target */,
+				1BB7FE002EB0E2AF008AC2DF /* Exceptions for "UniCalendar" folder in "UniCalendarUITests" target */,
+			);
+			path = UniCalendar;
+			sourceTree = "<group>";
+		};
+		1BB7FDDE2EB0D217008AC2DF /* UniCalendarTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UniCalendarTests;
+			sourceTree = "<group>";
+		};
+		1BB7FDE82EB0D217008AC2DF /* UniCalendarUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = UniCalendarUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1BB7FDC32EB0D215008AC2DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D3C6DAB318B50D59BB2BE7B7 /* Pods_UniCalendar.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDD82EB0D217008AC2DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDE22EB0D217008AC2DF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1BB7FDBD2EB0D215008AC2DF = {
+			isa = PBXGroup;
+			children = (
+				1BB7FDC82EB0D215008AC2DF /* UniCalendar */,
+				1BB7FDDE2EB0D217008AC2DF /* UniCalendarTests */,
+				1BB7FDE82EB0D217008AC2DF /* UniCalendarUITests */,
+				1BB7FDC72EB0D215008AC2DF /* Products */,
+				DCD704339A4374C8FEB155D0 /* Pods */,
+				BC49D2CD2290A13688CE0BBE /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		1BB7FDC72EB0D215008AC2DF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1BB7FDC62EB0D215008AC2DF /* UniCalendar.app */,
+				1BB7FDDB2EB0D217008AC2DF /* UniCalendarTests.xctest */,
+				1BB7FDE52EB0D217008AC2DF /* UniCalendarUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		BC49D2CD2290A13688CE0BBE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9C2BCF2A070D44B6E6E90CF9 /* Pods_UniCalendar.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DCD704339A4374C8FEB155D0 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				987BCC1448D9669425904278 /* Pods-UniCalendar.debug.xcconfig */,
+				4D2F62FFAA5F37C60EA57ABE /* Pods-UniCalendar.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1BB7FDC52EB0D215008AC2DF /* UniCalendar */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BB7FDEF2EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendar" */;
+			buildPhases = (
+				A77346D0092AA039D42E6219 /* [CP] Check Pods Manifest.lock */,
+				1BB7FDC22EB0D215008AC2DF /* Sources */,
+				1BB7FDC32EB0D215008AC2DF /* Frameworks */,
+				1BB7FDC42EB0D215008AC2DF /* Resources */,
+				1B46039E2EB247E90067475E /* Embed Frameworks */,
+				4C6573A36F1949AEA03175DA /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1BB7FDC82EB0D215008AC2DF /* UniCalendar */,
+			);
+			name = UniCalendar;
+			productName = UniCalendar;
+			productReference = 1BB7FDC62EB0D215008AC2DF /* UniCalendar.app */;
+			productType = "com.apple.product-type.application";
+		};
+		1BB7FDDA2EB0D217008AC2DF /* UniCalendarTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BB7FDF22EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendarTests" */;
+			buildPhases = (
+				1BB7FDD72EB0D217008AC2DF /* Sources */,
+				1BB7FDD82EB0D217008AC2DF /* Frameworks */,
+				1BB7FDD92EB0D217008AC2DF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1BB7FDDD2EB0D217008AC2DF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1BB7FDDE2EB0D217008AC2DF /* UniCalendarTests */,
+			);
+			name = UniCalendarTests;
+			productName = UniCalendarTests;
+			productReference = 1BB7FDDB2EB0D217008AC2DF /* UniCalendarTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		1BB7FDE42EB0D217008AC2DF /* UniCalendarUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1BB7FDF52EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendarUITests" */;
+			buildPhases = (
+				1BB7FDE12EB0D217008AC2DF /* Sources */,
+				1BB7FDE22EB0D217008AC2DF /* Frameworks */,
+				1BB7FDE32EB0D217008AC2DF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1BB7FDE72EB0D217008AC2DF /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1BB7FDE82EB0D217008AC2DF /* UniCalendarUITests */,
+			);
+			name = UniCalendarUITests;
+			productName = UniCalendarUITests;
+			productReference = 1BB7FDE52EB0D217008AC2DF /* UniCalendarUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1BB7FDBE2EB0D215008AC2DF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					1BB7FDC52EB0D215008AC2DF = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					1BB7FDDA2EB0D217008AC2DF = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 1BB7FDC52EB0D215008AC2DF;
+					};
+					1BB7FDE42EB0D217008AC2DF = {
+						CreatedOnToolsVersion = 16.2;
+						TestTargetID = 1BB7FDC52EB0D215008AC2DF;
+					};
+				};
+			};
+			buildConfigurationList = 1BB7FDC12EB0D215008AC2DF /* Build configuration list for PBXProject "UniCalendar" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1BB7FDBD2EB0D215008AC2DF;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 1BB7FDC72EB0D215008AC2DF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1BB7FDC52EB0D215008AC2DF /* UniCalendar */,
+				1BB7FDDA2EB0D217008AC2DF /* UniCalendarTests */,
+				1BB7FDE42EB0D217008AC2DF /* UniCalendarUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		1BB7FDC42EB0D215008AC2DF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDD92EB0D217008AC2DF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDE32EB0D217008AC2DF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4C6573A36F1949AEA03175DA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-UniCalendar/Pods-UniCalendar-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-UniCalendar/Pods-UniCalendar-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-UniCalendar/Pods-UniCalendar-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A77346D0092AA039D42E6219 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-UniCalendar-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1BB7FDC22EB0D215008AC2DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDD72EB0D217008AC2DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1BB7FDE12EB0D217008AC2DF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1BB7FDDD2EB0D217008AC2DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BB7FDC52EB0D215008AC2DF /* UniCalendar */;
+			targetProxy = 1BB7FDDC2EB0D217008AC2DF /* PBXContainerItemProxy */;
+		};
+		1BB7FDE72EB0D217008AC2DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1BB7FDC52EB0D215008AC2DF /* UniCalendar */;
+			targetProxy = 1BB7FDE62EB0D217008AC2DF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1BB7FDED2EB0D217008AC2DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		1BB7FDEE2EB0D217008AC2DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		1BB7FDF02EB0D217008AC2DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 987BCC1448D9669425904278 /* Pods-UniCalendar.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"UniCalendar/Preview Content\"";
+				DEVELOPMENT_TEAM = K9AH7LGS8M;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UniCalendar/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = UniCalendar;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		1BB7FDF12EB0D217008AC2DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4D2F62FFAA5F37C60EA57ABE /* Pods-UniCalendar.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"UniCalendar/Preview Content\"";
+				DEVELOPMENT_TEAM = K9AH7LGS8M;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = UniCalendar/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = UniCalendar;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendar;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		1BB7FDF32EB0D217008AC2DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NUS4Q3BL94;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UniCalendar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UniCalendar";
+			};
+			name = Debug;
+		};
+		1BB7FDF42EB0D217008AC2DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NUS4Q3BL94;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendarTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/UniCalendar.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/UniCalendar";
+			};
+			name = Release;
+		};
+		1BB7FDF62EB0D217008AC2DF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NUS4Q3BL94;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendarUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = UniCalendar;
+			};
+			name = Debug;
+		};
+		1BB7FDF72EB0D217008AC2DF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = NUS4Q3BL94;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.UniCalendar.UniCalendarUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = UniCalendar;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1BB7FDC12EB0D215008AC2DF /* Build configuration list for PBXProject "UniCalendar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BB7FDED2EB0D217008AC2DF /* Debug */,
+				1BB7FDEE2EB0D217008AC2DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BB7FDEF2EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendar" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BB7FDF02EB0D217008AC2DF /* Debug */,
+				1BB7FDF12EB0D217008AC2DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BB7FDF22EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendarTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BB7FDF32EB0D217008AC2DF /* Debug */,
+				1BB7FDF42EB0D217008AC2DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1BB7FDF52EB0D217008AC2DF /* Build configuration list for PBXNativeTarget "UniCalendarUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1BB7FDF62EB0D217008AC2DF /* Debug */,
+				1BB7FDF72EB0D217008AC2DF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1BB7FDBE2EB0D215008AC2DF /* Project object */;
+}
