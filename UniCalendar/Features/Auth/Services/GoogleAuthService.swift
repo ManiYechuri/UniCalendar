@@ -42,7 +42,7 @@ final class GoogleAuthService: NSObject, ObservableObject {
             redirectURL: redirectURI,
             responseType: OIDResponseTypeCode,
             additionalParameters: [
-                "prompt": "consent",
+                "prompt": "consent select_account",
                 "access_type": "offline"
             ]
         )
