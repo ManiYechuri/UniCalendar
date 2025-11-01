@@ -2,7 +2,7 @@ import SwiftUI
 
 struct WeekCalendarView: View {
     @StateObject private var vm = CalendarViewModel()
-
+    @State private var isLoading = false
     @State private var popupHour: Int?
     @State private var popupEvents: [CalendarEvent] = []
     @State private var showPopup = false
@@ -115,15 +115,30 @@ struct WeekCalendarView: View {
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .zIndex(3)
             }
+            if isLoading {
+                LoadingOverlay(text: "Syncing calendars…")
+                    .transition(.opacity)
+            }
         }
         .animation(.easeInOut(duration: 0.2), value: showFilter)
         .animation(.easeInOut(duration: 0.2), value: showPopup)
         .navigationBarHidden(true)
         .onAppear {
-            vm.reloadForSelectedDay_async()
+            if AccountStorage.shared.hasAnyConnectedAccount() {
+                isLoading = true
+            }
+            vm.reloadForSelectedDay_async {
+                isLoading = false
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .syncWillStart)) { _ in
+            isLoading = true
         }
         .onReceive(NotificationCenter.default.publisher(for: .eventsDidUpdate)) { _ in
             vm.reloadForSelectedDay_async()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .syncDidFinish)) { _ in
+            isLoading = false
         }
         .sheet(item: $selectedEvent) { ev in
             NavigationView {

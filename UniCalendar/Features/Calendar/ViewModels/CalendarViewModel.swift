@@ -66,7 +66,7 @@ final class CalendarViewModel: ObservableObject {
         }
     }
 
-    func reloadForSelectedDay_async() {
+    func reloadForSelectedDay_async(completion: (() -> Void)? = nil) {
         let cal = Calendar(identifier: .gregorian)
         let start = cal.startOfDay(for: selectedDate)
         let end = cal.date(byAdding: .day, value: 1, to: start)!
@@ -82,6 +82,7 @@ final class CalendarViewModel: ObservableObject {
             }
             self.dayEvents = filtered.sorted { $0.start < $1.start }
         }
+        DispatchQueue.main.async { completion?() }
     }
 
 }
