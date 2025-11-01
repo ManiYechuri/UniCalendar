@@ -24,14 +24,18 @@ struct UniCalendarApp: App {
                     }
                 }
                 .onAppear {
+                    NotificationScheduler.shared.rescheduleAllUpcoming()
+                    NotificationScheduler.shared.requestAuthorizationIfNeeded()
                     AccountStorage.shared.migrateAccountsSchemaIfNeeded()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: .eventsDidUpdate)) { _ in
+                    NotificationScheduler.shared.rescheduleAllUpcoming()
                 }
         }
     }
 }
 
 
-// Keep your temporary Microsoft stub so things compile
 final class DummyMicrosoftAuthAdapter: AuthService {
     func signIn(presenting: UIViewController) async throws -> AuthUser {
         AuthUser(id: UUID().uuidString, email: "user@outlook.com", provider: "microsoft")

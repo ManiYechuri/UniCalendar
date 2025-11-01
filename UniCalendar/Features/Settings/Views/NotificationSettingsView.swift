@@ -1,10 +1,9 @@
 import SwiftUI
 
 struct NotificationSettingsView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    @State private var enableAll: Bool = true
-    @State private var selectedReminder: ReminderTime = .min15
+    @State private var enableAll: Bool = NotificationPrefs.isEnabled
+    @State private var selectedReminder: ReminderTime =
+        ReminderTime.fromStored(minutes: NotificationPrefs.leadMinutes)
     @State private var soundEnabled: Bool = true
     @State private var vibrateEnabled: Bool = true
 
@@ -26,7 +25,7 @@ struct NotificationSettingsView: View {
                 }
                 .padding(.horizontal, 16)
 
-                // Remind Me
+                // Remind Me section
                 VStack(alignment: .leading, spacing: 10) {
                     SectionHeader("REMIND ME")
                     SettingCard {
@@ -54,7 +53,7 @@ struct NotificationSettingsView: View {
                 }
                 .padding(.horizontal, 16)
 
-                // Alert Preferences
+                // Alert preferences
                 VStack(alignment: .leading, spacing: 10) {
                     SectionHeader("ALERT PREFERENCES")
                     SettingCard {
@@ -63,18 +62,6 @@ struct NotificationSettingsView: View {
                             iconTint: .blue,
                             title: "Sound",
                             isOn: $soundEnabled
-                        )
-
-                        Divider().padding(.leading, 56)
-
-                        SettingRow(
-                            icon: Image(systemName: "music.note.list"),
-                            iconTint: .blue,
-                            title: "Notification Tone",
-                            subtitle: nil,
-                            trailingText: "Default",
-                            accessory: .chevron,
-                            action: { /* present tone picker later */ }
                         )
 
                         Divider().padding(.leading, 56)
@@ -95,28 +82,16 @@ struct NotificationSettingsView: View {
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationTitle("Notification Settings")
         .navigationBarTitleDisplayMode(.inline)
-//        .toolbar {
-//            ToolbarItem(placement: .navigationBarLeading) {
-//                Button { dismiss() } label: {
-//                    Image(systemName: "chevron.left").font(.title3)
-//                }
-//            }
-//        }
-    }
-}
-
-// MARK: - Reminder options
-enum ReminderTime: CaseIterable {
-    case atEvent, min5, min15, min30, hour1, custom
-
-    var label: String {
-        switch self {
-        case .atEvent: return "At time of event"
-        case .min5:    return "5 minutes before"
-        case .min15:   return "15 minutes before"
-        case .min30:   return "30 minutes before"
-        case .hour1:   return "1 hour before"
-        case .custom:  return "Custom..."
+        // Write prefs + reschedule notifications when settings change
+        .onChange(of: enableAll) { newValue in
+            NotificationPrefs.isEnabled = newValue
+            NotificationScheduler.shared.rescheduleAllUpcoming()
+        }
+        .onChange(of: selectedReminder) { newValue in
+            if let mins = newValue.minutesBefore {
+                NotificationPrefs.leadMinutes = mins
+                NotificationScheduler.shared.rescheduleAllUpcoming()
+            }
         }
     }
 }

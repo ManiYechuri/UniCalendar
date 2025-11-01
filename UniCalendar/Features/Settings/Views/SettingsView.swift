@@ -3,10 +3,9 @@ import SwiftUI
 struct SettingsView: View {
     // State
     @State private var notificationsOn: Bool = true
-    @State private var timing: ReminderTime = .min15   // reuse the enum from NotificationSettingsView
+    @State private var timing: ReminderTime = .min15
 
-    // Callbacks (optional)
-    var onManageAccounts: (() -> Void)?
+    // Optional callbacks if you still need them elsewhere
     var onRefreshCalendar: (() -> Void)?
     var onClearCache: (() -> Void)?
     var onHelp: (() -> Void)?
@@ -23,12 +22,20 @@ struct SettingsView: View {
                     // ACCOUNT MANAGEMENT
                     SectionHeader("ACCOUNT MANAGEMENT")
                     SettingCard {
-                        SettingRow(
-                            icon: .init(systemName: "person.2.circle"),
-                            iconTint: .gray,
-                            title: "Manage Connected Accounts",
-                            accessory: .chevron
-                        ) { onManageAccounts?() }
+                        // Push to SyncView
+                        NavigationLink {
+                            SyncView()
+                        } label: {
+                            SettingRowContent(
+                                icon: .init(systemName: "person.2.circle"),
+                                iconTint: .gray,
+                                title: "Manage Connected Accounts",
+                                subtitle: nil,
+                                trailingText: nil,
+                                showsChevron: true
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     // NOTIFICATIONS
