@@ -11,4 +11,3 @@ struct MicrosoftAuthService: AuthService {
         return AuthUser(id: UUID().uuidString, email: "user@outlook.com", provider: "microsoft")
     }
 }
-

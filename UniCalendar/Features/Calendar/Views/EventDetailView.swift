@@ -3,14 +3,54 @@ import SwiftUI
 struct EventDetailView: View {
     let event: CalendarEvent
 
-    var attendees: [String] = []
-    var reminderMinutes: Int? = 15
-    var notes: String? = nil
-    var agenda: [String] = []
+    private var attendeeNames: [String] {
+        (event.attendees ?? []).map { attendee in
+            if let n = attendee.name, !n.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                return n
+            }
+            if let e = attendee.email, let namePart = e.split(separator: "@").first {
+                return String(namePart)
+            }
+            return "Unknown"
+        }
+    }
+    
+    private var attendeeEmails: [String] {
+        (event.attendees ?? []).map { a in
+            if let e = a.email, !e.isEmpty { return e }
+            if let n = a.name, !n.isEmpty { return n }        // fallback if email missing
+            return "unknown@local"
+        }
+    }
+
+    private var attendeeCount: Int { attendeeNames.count }
+
+    private var agendaPlainText: String? {
+        guard let raw = event.agenda?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty else { return nil }
+        return raw.htmlStripped()
+    }
+
+    private var agendaBullets: [String] {
+        guard let text = agendaPlainText else { return [] }
+        return text
+            .replacingOccurrences(of: "\r", with: "")
+            .components(separatedBy: "\n")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+            .map { line in
+                line
+                    .replacingOccurrences(of: #"^\s*[-•*]\s*"#, with: "", options: .regularExpression)
+            }
+    }
+
+    private var reminderMinutes: Int? { 15 } // keep if you add reminders later
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
+
+                // Title + source chip
                 VStack(alignment: .leading, spacing: 12) {
                     Text(event.title)
                         .font(Typography.f35)
@@ -24,6 +64,7 @@ struct EventDetailView: View {
                     }
                 }
 
+                // Info card
                 SettingCard {
                     InfoRow(
                         icon: "clock",
@@ -33,51 +74,56 @@ struct EventDetailView: View {
 
                     if let loc = event.location, !loc.isEmpty {
                         Divider().padding(.leading, 56)
-                        InfoRow(
-                            icon: "mappin.and.ellipse",
-                            title: loc,
-                            subtitle: nil
-                        )
+                        InfoRow(icon: "mappin.and.ellipse", title: loc, subtitle: nil)
                     }
 
                     Divider().padding(.leading, 56)
-                    InfoRow(
-                        icon: "network",
-                        title: sourceText(event.source),
-                        subtitle: nil
-                    )
+                    InfoRow(icon: "network", title: sourceText(event.source), subtitle: nil)
 
-                    if !attendees.isEmpty {
+                    if attendeeCount > 0 {
                         Divider().padding(.leading, 56)
                         InfoRow(
                             icon: "person.2",
-                            title: "Attendees (\(attendees.count))",
+                            title: "Attendees (\(attendeeCount))",
                             subtitle: nil,
-                            trailing: AnyView(AvatarStack(names: attendees))
+                            trailing: AnyView(AvatarStack(names: attendeeNames))
                         )
                     }
 
                     if let mins = reminderMinutes {
                         Divider().padding(.leading, 56)
-                        InfoRow(
-                            icon: "bell",
-                            title: "\(mins) minutes before",
-                            subtitle: nil
-                        )
+                        InfoRow(icon: "bell", title: "\(mins) minutes before", subtitle: nil)
+                    }
+
+                    if let link = event.htmlLink, let url = URL(string: link) {
+                        Divider().padding(.leading, 56)
+                        Link(destination: url) {
+                            InfoRow(icon: "link", title: "Open in Google Calendar", subtitle: nil)
+                        }
                     }
                 }
 
-                if notes != nil || !agenda.isEmpty {
+                // Notes / Agenda block
+                if agendaPlainText != nil || !agendaBullets.isEmpty || attendeeCount > 0 {
                     VStack(alignment: .leading, spacing: 12) {
-                        if let notes {
-                            Text("Notes").font(.headline)
-                            Text(notes).foregroundColor(.secondary)
-                        }
-                        if !agenda.isEmpty {
+                        if !agendaBullets.isEmpty {
                             Text("Agenda").font(.headline)
                             VStack(alignment: .leading, spacing: 6) {
-                                ForEach(agenda, id: \.self) { item in
+                                ForEach(agendaBullets, id: \.self) { item in
                                     Text("• \(item)").foregroundColor(.secondary)
+                                }
+                            }
+                        } else if let agendaText = agendaPlainText {
+                            Text("Notes").font(.headline)
+                            Text(agendaText).foregroundColor(.secondary)
+                        }
+
+                        if attendeeCount > 0 {
+                            Divider().padding(.vertical, 4)
+                            Text("Attendees").font(.headline)
+                            VStack(alignment: .leading, spacing: 4) {
+                                ForEach(attendeeEmails, id: \.self) { n in
+                                    Text("• \(n)").foregroundColor(.secondary)
                                 }
                             }
                         }
@@ -106,12 +152,32 @@ struct EventDetailView: View {
         f.dateStyle = .none
         return "\(f.string(from: ev.start)) – \(f.string(from: ev.end))"
     }
-    
+
     private let dayHeaderFormatter: DateFormatter = {
         let f = DateFormatter()
         f.dateFormat = "EEEE, MMMM d"
         return f
     }()
+}
+
+// MARK: - Helpers used by the view
+
+private extension String {
+    func htmlStripped() -> String {
+        // Simple & robust HTML → plain text converter
+        guard let data = self.data(using: .utf8) else { return self }
+        if let attributed = try? NSAttributedString(
+            data: data,
+            options: [.documentType: NSAttributedString.DocumentType.html,
+                      .characterEncoding: String.Encoding.utf8.rawValue],
+            documentAttributes: nil
+        ) {
+            return attributed.string
+                .replacingOccurrences(of: "\u{00A0}", with: " ")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return self
+    }
 }
 
 private struct InfoRow: View {
@@ -147,9 +213,7 @@ private struct InfoRow: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
     }
-
 }
-
 
 private struct SourceTag: View {
     let source: CalendarEvent.Source
@@ -192,8 +256,6 @@ private struct AvatarStack: View {
         }
     }
 }
-
-// MARK: - Little helpers
 
 private extension CalendarEvent.EventColor {
     var swiftUIColor: Color {

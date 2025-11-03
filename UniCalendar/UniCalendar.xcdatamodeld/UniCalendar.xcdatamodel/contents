@@ -11,9 +11,12 @@
     </entity>
     <entity name="EventEntity" representedClassName="EventEntity" syncable="YES" codeGenerationType="class">
         <attribute name="accountEmail" optional="YES" attributeType="String"/>
+        <attribute name="agenda" optional="YES" attributeType="String"/>
+        <attribute name="attendeesData" optional="YES" attributeType="Binary"/>
         <attribute name="color" optional="YES" attributeType="String"/>
         <attribute name="end" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="externalID" optional="YES" attributeType="String"/>
+        <attribute name="htmlLink" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="location" optional="YES" attributeType="String"/>
         <attribute name="source" optional="YES" attributeType="String"/>

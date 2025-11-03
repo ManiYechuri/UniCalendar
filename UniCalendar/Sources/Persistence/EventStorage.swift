@@ -15,12 +15,9 @@ final class EventStorage {
     private init() {}
 
     // MARK: - GOOGLE SYNC APIS (what SyncManager calls)
-
-    /// Full replace for a given account/provider (used in initial backfill windows)
     func replaceGoogleEvents(accountEmail: String, items: [GoogleEvent]) {
         let email = accountEmail.lowercased()
         bgContext.perform {
-            // wipe existing google events for this account
             let fetch: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "EventEntity")
             fetch.predicate = NSPredicate(format: "accountEmail == %@ AND source == %@", email, "google")
             let del = NSBatchDeleteRequest(fetchRequest: fetch)
@@ -31,7 +28,6 @@ final class EventStorage {
         }
     }
 
-    /// Upsert items by externalID (used in delta and safety window)
     func upsertGoogleItems(accountEmail: String, items: [GoogleEvent]) {
         let email = accountEmail.lowercased()
         bgContext.perform {
@@ -40,7 +36,6 @@ final class EventStorage {
         }
     }
 
-    /// Delete by external IDs (used for cancelled items in delta)
     func deleteExternalIDs(_ ids: [String], accountEmail: String, provider: String) {
         guard !ids.isEmpty else { return }
         let email = accountEmail.lowercased()
@@ -55,8 +50,6 @@ final class EventStorage {
             self.saveAndNotify()
         }
     }
-
-    // MARK: - Existing simple APIs (optional keep)
 
     func fetchAll() -> [CalendarEvent] {
         var result: [CalendarEvent] = []
@@ -88,7 +81,6 @@ final class EventStorage {
         return result
     }
 
-    /// Delete all events for one account (used when disconnecting an account)
     func deleteAllEvents(forAccountEmail email: String) {
         let e = email.lowercased()
         viewContext.performAndWait {
@@ -104,7 +96,6 @@ final class EventStorage {
         print("🗑️ Deleted events for account \(e)")
     }
 
-    /// Nuke everything (handy for testing when LoginView appears with no accounts)
     func nukeAll() {
         viewContext.performAndWait {
             let fetch: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "EventEntity")
@@ -117,8 +108,6 @@ final class EventStorage {
         }
         print("🧨 Deleted all EventEntity rows")
     }
-
-    // MARK: - Internals
 
     private func saveAndNotify() {
         do { try bgContext.save() } catch { print("CoreData save error:", error) }
@@ -144,6 +133,10 @@ final class EventStorage {
             e.start = dates.start
             e.end   = dates.end
             e.color = "blue"
+
+            e.agenda = item.description
+            e.htmlLink = item.htmlLink
+            e.attendeesData = AttendeesCodec.encode(item.attendees?.toEventAttendees())
         }
     }
 
@@ -151,7 +144,6 @@ final class EventStorage {
         let parse = makeDateParsers()
 
         for item in googleItems {
-            // deletes handled via deleteExternalIDs; skip cancelled creates
             if item.status == "cancelled" { continue }
 
             let req: NSFetchRequest<EventEntity> = EventEntity.fetchRequest()
@@ -174,24 +166,30 @@ final class EventStorage {
             e.start = dates.start
             e.end   = dates.end
             e.color = "blue"
+
+            e.agenda = item.description
+            e.htmlLink = item.htmlLink
+            e.attendeesData = AttendeesCodec.encode(item.attendees?.toEventAttendees())
         }
     }
 
     private func mapToAppModel(_ entities: [EventEntity]) -> [CalendarEvent] {
         entities.compactMap { e in
             guard let start = e.start, let end = e.end else { return nil }
+            let attendees = AttendeesCodec.decode(e.attendeesData)
             return CalendarEvent(
                 title: e.title ?? "(No Title)",
                 location: e.location,
                 start: start,
                 end: end,
                 color: (e.color == "red") ? .red : .blue,
-                source: (e.source == "outlook") ? .outlook : .google
+                source: (e.source == "outlook") ? .outlook : .google,
+                agenda: e.agenda,
+                attendees: attendees,
+                htmlLink: e.htmlLink
             )
         }
     }
-
-    // MARK: - Date parsing helpers (handles dateTime and all-day date)
 
     private struct Parsers {
         let isoWithFrac: ISO8601DateFormatter
@@ -218,7 +216,6 @@ final class EventStorage {
     }
 
     private func parseGoogleDates(_ item: GoogleEvent, parse: Parsers) -> (start: Date?, end: Date?) {
-        // If all-day: Google sends `date` (YYYY-MM-DD); treat as local all-day (start at 00:00, end next day 00:00)
         if let day = item.start.date ?? item.start.dateTime {
             if day.count == 10 { // "YYYY-MM-DD"
                 let comps = day.split(separator: "-").compactMap { Int($0) }
@@ -253,13 +250,14 @@ private struct EventRowDTO {
     let end: Date
     let color: String
     let source: String
+    // NEW
+    let agenda: String?
+    let htmlLink: String?
+    let attendeesData: Data?
 }
 
-// MARK: - Async, non-blocking fetch for UI (use this in view models)
 extension EventStorage {
 
-    /// Background fetch with batching and a narrow property set.
-    /// Calls `completion` on the main thread with mapped `CalendarEvent`s.
     func fetchAsync(in range: DateInterval,
                     accounts: [String]? = nil,
                     completion: @escaping ([CalendarEvent]) -> Void) {
@@ -276,11 +274,13 @@ extension EventStorage {
             }
             req.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: preds)
 
-            // Perf knobs
             req.fetchBatchSize = 200
             req.returnsObjectsAsFaults = true
             req.includesPropertyValues = true
-            req.propertiesToFetch = ["title", "location", "start", "end", "color", "source"]
+            req.propertiesToFetch = [
+                "title","location","start","end","color","source",
+                "agenda","htmlLink","attendeesData"
+            ]
             req.resultType = .managedObjectResultType
             req.sortDescriptors = [NSSortDescriptor(key: "start", ascending: true)]
 
@@ -289,7 +289,6 @@ extension EventStorage {
                 return
             }
 
-            // Map to DTOs on background
             let dtos: [EventRowDTO] = rows.compactMap { obj in
                 guard
                     let start = obj.value(forKey: "start") as? Date,
@@ -301,11 +300,13 @@ extension EventStorage {
                     start: start,
                     end: end,
                     color: (obj.value(forKey: "color") as? String) ?? "blue",
-                    source: (obj.value(forKey: "source") as? String) ?? "google"
+                    source: (obj.value(forKey: "source") as? String) ?? "google",
+                    agenda: obj.value(forKey: "agenda") as? String,
+                    htmlLink: obj.value(forKey: "htmlLink") as? String,
+                    attendeesData: obj.value(forKey: "attendeesData") as? Data
                 )
             }
 
-            // Convert to app model
             let events: [CalendarEvent] = dtos.map {
                 CalendarEvent(
                     title: $0.title,
@@ -313,7 +314,10 @@ extension EventStorage {
                     start: $0.start,
                     end: $0.end,
                     color: ($0.color == "red") ? .red : .blue,
-                    source: ($0.source == "outlook") ? .outlook : .google
+                    source: ($0.source == "outlook") ? .outlook : .google,
+                    agenda: $0.agenda,
+                    attendees: AttendeesCodec.decode($0.attendeesData),
+                    htmlLink: $0.htmlLink
                 )
             }
 
