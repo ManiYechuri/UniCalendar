@@ -12,14 +12,12 @@ struct SyncView: View {
     var body: some View {
         ZStack(alignment: .top) {
             backgroundLayer
-            scrollContent
+            listContent
             addAccountOverlay
             disconnectOverlay
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar { toolbarContent }
-
-        // Keep the list live
         .onAppear {
             loadAccounts()
             SyncManager.shared.refreshAllAccounts()
@@ -34,68 +32,55 @@ struct SyncView: View {
     }
 }
 
-private extension SyncView {
-    // MARK: UI Layers
+// MARK: - UI Layers
 
+private extension SyncView {
     var backgroundLayer: some View {
         Color(.systemGroupedBackground).ignoresSafeArea()
     }
 
-    var scrollContent: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                sectionHeader
-                if accounts.isEmpty { emptyStateCard } else { accountsCard }
+    var listContent: some View {
+        List {
+            Section {
+                if accounts.isEmpty {
+                    emptyStateRow
+                } else {
+                    ForEach(accounts) { account in
+                        AccountRowCell(account: account)
+                            .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                                // ✅ Only Disconnect
+                                Button(role: .destructive) {
+                                    accountPendingDisconnect = account
+                                    showDisconnect = true
+                                } label: {
+                                    Label("Disconnect", systemImage: "link.badge.minus")
+                                }
+                            }
+                    }
+                }
+            } header: {
+                Text("CONNECTED ACCOUNTS")
+                    .textCase(.uppercase)
+                    .font(Typography.f14SemiBold)
             }
-            .padding(.bottom, 20)
         }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
-        .refreshable { SyncManager.shared.refreshAllAccounts() }
+        .refreshable {
+            // Keep pull-to-refresh for a full resync of all accounts
+            SyncManager.shared.refreshAllAccounts()
+        }
     }
 
-    var sectionHeader: some View {
-        Text("CONNECTED ACCOUNTS")
-            .font(Typography.f14SemiBold)
-            .foregroundColor(.secondary)
-            .padding(.horizontal, 16)
-    }
-
-    var emptyStateCard: some View {
+    var emptyStateRow: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("No accounts connected").font(.headline)
             Text("Tap + to connect Google or Outlook and start syncing your calendars.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .padding(16)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
-        )
-        .padding(.horizontal, 16)
-    }
-
-    var accountsCard: some View {
-        VStack(spacing: 0) {
-            ForEach(accounts) { account in
-                AccountRowView(account: account)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .onRightSwipe {
-                        accountPendingDisconnect = account
-                        showDisconnect = true
-                    }
-
-                Divider().padding(.leading, 72)
-            }
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 3)
-        )
-        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
     }
 
     // Centered title + trailing plus
@@ -103,7 +88,7 @@ private extension SyncView {
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .principal) {
             Text("Sync")
-                .font(Typography.f14SemiBold) // your custom font
+                .font(Typography.f18Bold)
                 .foregroundStyle(.primary)
         }
         ToolbarItem(placement: .navigationBarTrailing) {
@@ -119,7 +104,6 @@ private extension SyncView {
     }
 
     // MARK: Add Account Overlay (no setup screens)
-
     var addAccountOverlay: some View {
         Group {
             if showAddSheet {
@@ -128,7 +112,8 @@ private extension SyncView {
                     .onTapGesture { showAddSheet = false }
                     .transition(.opacity)
 
-                VStack { Spacer()
+                VStack {
+                    Spacer()
                     AddAccountPopupView(
                         onClose: { showAddSheet = false },
                         onConnectGoogle: {
@@ -140,6 +125,7 @@ private extension SyncView {
                             startOutlookConnect()
                         }
                     )
+                    .padding(.bottom, 12)
                 }
                 .transition(.move(edge: .bottom).combined(with: .opacity))
             }
@@ -148,7 +134,6 @@ private extension SyncView {
     }
 
     // MARK: Disconnect Overlay
-
     var disconnectOverlay: some View {
         Group {
             if showDisconnect {
@@ -169,9 +154,11 @@ private extension SyncView {
         }
         .animation(.easeInOut(duration: 0.2), value: showDisconnect)
     }
+}
 
-    // MARK: Actions / Data
+// MARK: - Actions / Data
 
+private extension SyncView {
     func loadAccounts() {
         let entities = AccountStorage.shared.connectedAccounts()
         accounts = entities.map(SyncAccount.init(entity:))
@@ -183,14 +170,13 @@ private extension SyncView {
         }
         Task {
             do {
-                // Sign in (can be 1st or additional Google account)
                 let user = try await GoogleAuthAdapter().signIn(presenting: presenter)
-
-                // Store/Update account row (separate row per email)
-                AccountStorage.shared.upsertAccount(email: user.email, provider: "google", displayName: user.email)
+                AccountStorage.shared.upsertAccount(
+                    email: user.email,
+                    provider: "google",
+                    displayName: user.email
+                )
                 NotificationCenter.default.post(name: .accountsDidChange, object: nil)
-
-                // Kick a full sync pass (backfill or delta based on token)
                 SyncManager.shared.refreshAllAccounts()
             } catch {
                 print("Google connect failed:", error.localizedDescription)
@@ -223,14 +209,66 @@ private extension SyncView {
         NotificationCenter.default.post(name: .accountsDidChange, object: nil)
         NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
 
-        // Optional: refresh remaining accounts so Calendar view reconciles
+        // Optional: refresh remaining accounts to reconcile UI
         SyncManager.shared.refreshAllAccounts()
     }
 }
 
+// MARK: - Row
+
+private struct AccountRowCell: View {
+    let account: SyncAccount
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: account.provider == .google ? "g.circle.fill" : "o.circle.fill")
+                .font(.title2)
+                .foregroundStyle(account.provider == .google ? .red : .blue)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(account.email)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundColor(.primary)
+
+                Text(account.provider == .google ? "Google" : "Outlook")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
+
+            Text(statusText)
+                .font(.caption2.weight(.semibold))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(statusColor.opacity(0.12))
+                .foregroundStyle(statusColor)
+                .clipShape(Capsule())
+        }
+        .contentShape(Rectangle())
+    }
+
+    private var statusText: String {
+        switch account.status {
+        case .connected: return "Connected"
+        case .syncing:   return "Syncing"
+        case .error:     return "Error"
+        }
+    }
+
+    private var statusColor: Color {
+        switch account.status {
+        case .connected: return .green
+        case .syncing:   return .orange
+        case .error:     return .red
+        }
+    }
+}
+
+// MARK: - Mapping helper
+
 extension SyncAccount {
     init(entity e: AccountEntity) {
-        // provider
         let provider: CalendarProvider = {
             switch (e.provider ?? "").lowercased() {
             case "outlook": return .outlook
@@ -239,12 +277,11 @@ extension SyncAccount {
             }
         }()
 
-        // status (prefer explicit status, fall back to isConnected)
         let status: SyncStatus = {
             let s = (e.status ?? "").lowercased()
-            if s == "error"    { return .error }
-            if s == "syncing"  { return .syncing }
-            if s == "connected"{ return .connected }
+            if s == "error"     { return .error }
+            if s == "syncing"   { return .syncing }
+            if s == "connected" { return .connected }
             return (e.isConnected == true) ? .connected : .error
         }()
 
@@ -255,5 +292,4 @@ extension SyncAccount {
         )
     }
 }
-
 
