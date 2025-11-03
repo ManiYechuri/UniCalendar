@@ -1,13 +1,15 @@
 import SwiftUI
 
 struct SyncView: View {
-    // Connected accounts from Core Data
     @State private var accounts: [SyncAccount] = []
 
-    // Overlays
     @State private var showAddSheet = false
     @State private var showDisconnect = false
     @State private var accountPendingDisconnect: SyncAccount?
+
+    @State private var showLimitAlert = false
+
+    private let MAX_ACCOUNTS = 4
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -29,6 +31,11 @@ struct SyncView: View {
             loadAccounts()
             SyncManager.shared.refreshAllAccounts()
         }
+        .alert("Limit reached", isPresented: $showLimitAlert, actions: {
+            Button("OK", role: .cancel) {}
+        }, message: {
+            Text("You cannot connect more than 4 accounts.")
+        })
     }
 }
 
@@ -41,14 +48,15 @@ private extension SyncView {
 
     var listContent: some View {
         List {
-            Section {
-                if accounts.isEmpty {
+            if accounts.isEmpty {
+                Section {
                     emptyStateRow
-                } else {
+                }
+            } else {
+                Section {
                     ForEach(accounts) { account in
                         AccountRowCell(account: account)
                             .swipeActions(edge: .leading, allowsFullSwipe: true) {
-                                // ✅ Only Disconnect
                                 Button(role: .destructive) {
                                     accountPendingDisconnect = account
                                     showDisconnect = true
@@ -57,27 +65,32 @@ private extension SyncView {
                                 }
                             }
                     }
+                } header: {
+                    Text(headerTitle(for: accounts.count))
+                        .textCase(.none)
+                        .font(Typography.f14SemiBold)
                 }
-            } header: {
-                Text("CONNECTED ACCOUNTS")
-                    .textCase(.uppercase)
-                    .font(Typography.f14SemiBold)
             }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .refreshable {
-            // Keep pull-to-refresh for a full resync of all accounts
             SyncManager.shared.refreshAllAccounts()
         }
     }
 
+    func headerTitle(for count: Int) -> String {
+        if count <= 0 { return "" }
+        if count == 1 { return "Connected account" }
+        return "Connected Accounts"
+    }
+
     var emptyStateRow: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("No accounts connected").font(.headline)
-            Text("Tap + to connect Google or Outlook and start syncing your calendars.")
-                .font(.subheadline)
+            Text("No accounts connected").font(Typography.h1)
+            Text("Please click on the + button at the top to connect your Google account.")
+                .font(Typography.subheadline)
                 .foregroundColor(.secondary)
         }
         .padding(.vertical, 8)
@@ -93,7 +106,12 @@ private extension SyncView {
         }
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
-                showAddSheet = true
+                if accounts.count >= MAX_ACCOUNTS {
+                    // Show limit message instead of opening the add popup
+                    showLimitAlert = true
+                } else {
+                    showAddSheet = true
+                }
             } label: {
                 Image(systemName: "plus.circle.fill")
                     .font(.title3)
@@ -133,7 +151,7 @@ private extension SyncView {
         .animation(.easeInOut(duration: 0.2), value: showAddSheet)
     }
 
-    // MARK: Disconnect Overlay
+    // MARK: Disconnect Overlay (shows email)
     var disconnectOverlay: some View {
         Group {
             if showDisconnect {
@@ -143,7 +161,7 @@ private extension SyncView {
 
                 CenterAlertView(
                     title: "Disconnect Account?",
-                    message: "Are you sure you want to disconnect this account? All associated calendar events will be removed from UniCal.",
+                    message: disconnectMessage(), // includes the email
                     cancelTitle: "Cancel",
                     destructiveTitle: "Disconnect",
                     onCancel: { dismissDisconnect() },
@@ -153,6 +171,14 @@ private extension SyncView {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showDisconnect)
+    }
+
+    func disconnectMessage() -> String {
+        let email = accountPendingDisconnect?.email ?? "this account"
+        return """
+        You are about to disconnect \(email).
+        All associated calendar events and sync data for this account will be removed from UniCal.
+        """
     }
 }
 
@@ -171,12 +197,21 @@ private extension SyncView {
         Task {
             do {
                 let user = try await GoogleAuthAdapter().signIn(presenting: presenter)
+
+                // Prevent over-limit just in case (race with alert)
+                guard accounts.count < MAX_ACCOUNTS else {
+                    showLimitAlert = true
+                    return
+                }
+
                 AccountStorage.shared.upsertAccount(
                     email: user.email,
                     provider: "google",
                     displayName: user.email
                 )
                 NotificationCenter.default.post(name: .accountsDidChange, object: nil)
+
+                // Kick a full sync pass (backfill or delta based on token)
                 SyncManager.shared.refreshAllAccounts()
             } catch {
                 print("Google connect failed:", error.localizedDescription)
@@ -185,7 +220,7 @@ private extension SyncView {
     }
 
     func startOutlookConnect() {
-        // TODO: implement Outlook flow (token + upsert + refreshAllAccounts)
+        // Optional: implement Outlook later
         print("Outlook OAuth…")
     }
 
@@ -199,17 +234,20 @@ private extension SyncView {
     func confirmDisconnect() {
         guard let toRemove = accountPendingDisconnect else { return }
 
+        // Remove account and all its data
         AccountStorage.shared.markDisconnected(email: toRemove.email)
         EventStorage.shared.deleteAll(forAccountEmail: toRemove.email)
         GoogleAccountStore.shared.removeSyncToken(for: toRemove.email)
 
+        // Refresh UI state
         loadAccounts()
         dismissDisconnect()
 
+        // Broadcast changes so other screens update
         NotificationCenter.default.post(name: .accountsDidChange, object: nil)
         NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
 
-        // Optional: refresh remaining accounts to reconcile UI
+        // Optional: refresh remaining accounts so Calendar view reconciles
         SyncManager.shared.refreshAllAccounts()
     }
 }
@@ -227,18 +265,18 @@ private struct AccountRowCell: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(account.email)
-                    .font(.subheadline.weight(.semibold))
+                    .font(Typography.f14SemiBold)
                     .foregroundColor(.primary)
 
                 Text(account.provider == .google ? "Google" : "Outlook")
-                    .font(.caption)
+                    .font(Typography.f12Regular)
                     .foregroundColor(.secondary)
             }
 
             Spacer()
 
             Text(statusText)
-                .font(.caption2.weight(.semibold))
+                .font(Typography.footer)
                 .padding(.horizontal, 8)
                 .padding(.vertical, 4)
                 .background(statusColor.opacity(0.12))
@@ -246,6 +284,7 @@ private struct AccountRowCell: View {
                 .clipShape(Capsule())
         }
         .contentShape(Rectangle())
+        .frame(height: 50)
     }
 
     private var statusText: String {
