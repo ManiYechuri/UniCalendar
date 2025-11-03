@@ -84,6 +84,15 @@ final class CalendarViewModel: ObservableObject {
         }
         DispatchQueue.main.async { completion?() }
     }
+    
+    func refresh() async {
+        await withCheckedContinuation { (cont: CheckedContinuation<Void, Never>) in
+            SyncManager.shared.pullLatest {
+                cont.resume()
+            }
+        }
+        self.reloadForSelectedDay_async()
+    }
 
 }
 

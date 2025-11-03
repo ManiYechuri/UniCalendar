@@ -34,6 +34,8 @@ struct WeekCalendarView: View {
                 ScrollViewReader { proxy in
                     ScrollView(.vertical, showsIndicators: true) {
                         VStack(spacing: 0) {
+                            Color.clear.frame(height: 1)
+
                             ForEach(Array(vm.hoursRange), id: \.self) { hour in
                                 HourRowView(
                                     hour: hour,
@@ -47,10 +49,15 @@ struct WeekCalendarView: View {
                                         selectedEvent = ev
                                     }
                                 )
+                                .id(hour)
                                 .frame(height: vm.rowHeight, alignment: .top)
                             }
                         }
                         .overlay(emptyStateView, alignment: .top)
+                    }
+                    .refreshable {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        await vm.refresh()
                     }
                     .onAppear {
                         scrollToInitialHour(using: proxy)

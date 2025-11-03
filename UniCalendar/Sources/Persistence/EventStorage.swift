@@ -185,7 +185,7 @@ final class EventStorage {
                 color: (e.color == "red") ? .red : .blue,
                 source: (e.source == "outlook") ? .outlook : .google,
                 agenda: e.agenda,
-                attendees: attendees,
+                attendees: AttendeesCodec.decode(e.attendeesData),
                 htmlLink: e.htmlLink
             )
         }
@@ -250,7 +250,6 @@ private struct EventRowDTO {
     let end: Date
     let color: String
     let source: String
-    // NEW
     let agenda: String?
     let htmlLink: String?
     let attendeesData: Data?
