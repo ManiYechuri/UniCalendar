@@ -39,3 +39,15 @@ final class GoogleAccountStore {
     }
 }
 
+extension GoogleAccountStore {
+    func removeAllSyncTokens() {
+        let defaults = UserDefaults.standard
+        for key in defaults.dictionaryRepresentation().keys {
+            if key.hasPrefix("google.syncToken.") {
+                defaults.removeObject(forKey: key)
+            }
+        }
+        defaults.synchronize()
+        print("🧹 Cleared all Google sync tokens from UserDefaults")
+    }
+}

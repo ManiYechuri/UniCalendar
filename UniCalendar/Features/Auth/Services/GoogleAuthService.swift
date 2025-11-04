@@ -598,4 +598,3 @@ private extension Data {
         self.init(base64Encoded: s)
     }
 }
-

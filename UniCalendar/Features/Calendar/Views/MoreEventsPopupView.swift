@@ -4,7 +4,7 @@ struct MoreEventsPopupView: View {
     let title: String
     let events: [CalendarEvent]
     var onClose: () -> Void
-    var onSelect: (CalendarEvent) -> Void   // <-- new
+    var onSelect: (CalendarEvent) -> Void
 
     var body: some View {
         VStack(spacing: 12) {
@@ -19,11 +19,10 @@ struct MoreEventsPopupView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
 
-            // List the hidden events as tappable rows
             VStack(spacing: 8) {
                 ForEach(events) { ev in
                     Button {
-                        onSelect(ev)                 // <-- fire selection
+                        onSelect(ev)                 
                     } label: {
                         HStack(alignment: .top, spacing: 12) {
                             Circle()

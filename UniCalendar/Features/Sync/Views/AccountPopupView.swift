@@ -70,7 +70,7 @@ struct AddAccountPopupView: View {
             RoundedRectangle(cornerRadius: 8).fill(Color.white.opacity(0.2))
                 .frame(width: 36, height: 36)
             Text(letter)
-                .font(.system(size: 16, weight: .bold))
+                .font(Typography.f14SemiBold)
                 .foregroundColor(.white)
         }
         .frame(width: 36, height: 36)

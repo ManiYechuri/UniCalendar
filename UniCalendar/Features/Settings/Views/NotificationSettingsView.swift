@@ -10,8 +10,6 @@ struct NotificationSettingsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-
-                // Enable All Notifications toggle
                 SettingCard {
                     HStack {
                         Label("Enable All Notifications", systemImage: "bell.fill")
@@ -25,7 +23,6 @@ struct NotificationSettingsView: View {
                 }
                 .padding(.horizontal, 16)
 
-                // Remind Me section
                 VStack(alignment: .leading, spacing: 10) {
                     SectionHeader("REMIND ME")
                     SettingCard {
@@ -80,9 +77,8 @@ struct NotificationSettingsView: View {
             .padding(.top, 16)
         }
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
-        .navigationTitle("Notification Settings")
+        .toolbar{toolbarContent}
         .navigationBarTitleDisplayMode(.inline)
-        // Write prefs + reschedule notifications when settings change
         .onChange(of: enableAll) { newValue in
             NotificationPrefs.isEnabled = newValue
             NotificationScheduler.shared.rescheduleAllUpcoming()
@@ -93,6 +89,22 @@ struct NotificationSettingsView: View {
                 NotificationScheduler.shared.rescheduleAllUpcoming()
             }
         }
+        .onChange(of: soundEnabled) { newValue in
+            NotificationPrefs.soundOn = newValue
+        }
+        .onChange(of: vibrateEnabled) { newValue in
+            NotificationPrefs.vibrateOn = newValue
+        }
+    }
+    
+    @ToolbarContentBuilder
+    var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text("Notification Settings")
+                .font(Typography.f18Bold)
+                .foregroundStyle(.primary)
+        }
+        
     }
 }
 

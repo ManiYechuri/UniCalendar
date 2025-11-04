@@ -11,24 +11,24 @@ struct CenterAlertView: View {
     var body: some View {
         VStack(spacing: 12) {
             Text(title)
-                .font(.headline.weight(.semibold))
+                .font(Typography.h1)
                 .multilineTextAlignment(.center)
                 .padding(.top, 16)
 
             Text(message)
-                .font(.subheadline)
+                .font(Typography.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 16)
 
             HStack(spacing: 20) {
                 Button(cancelTitle, action: onCancel)
-                    .font(.headline)
+                    .font(Typography.f12Regular)
                     .foregroundColor(.blue)
                     .frame(maxWidth: .infinity)
 
                 Button(destructiveTitle, action: onDestructive)
-                    .font(.headline)
+                    .font(Typography.f12Regular)
                     .foregroundColor(.red)
                     .frame(maxWidth: .infinity)
             }

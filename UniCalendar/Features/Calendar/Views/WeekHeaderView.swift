@@ -30,9 +30,9 @@ struct WeekHeaderView: View {
 
                     Button { onSelect(date) } label: {
                         VStack(spacing: 6) {
-                            Text(weekdayFormatter.string(from: date)).font(.caption).foregroundColor(.secondary)
+                            Text(weekdayFormatter.string(from: date)).font(Typography.f12Regular).foregroundColor(.secondary)
                             Text(dayNumberFormatter.string(from: date))
-                                .font(.headline)
+                                .font(Typography.f12Regular)
                                 .frame(width: 36, height: 45)
                                 .background(Circle().fill(isSelected ? Color.blue : .clear))
                                 .overlay(Circle().stroke(isToday && !isSelected ? Color(.systemGray4) : .clear, lineWidth: 1))

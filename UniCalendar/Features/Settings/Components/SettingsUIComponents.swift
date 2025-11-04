@@ -16,6 +16,7 @@ public struct SettingCard<Content: View>: View {
                     .fill(Color(.systemBackground))
             )
             .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
+            .font(Typography.f12Regular)
     }
 }
 
@@ -116,7 +117,7 @@ struct SettingRowContent: View {
                     }
                 }
                 if let subtitle {
-                    Text(subtitle).font(.footnote).foregroundColor(.secondary)
+                    Text(subtitle).font(Typography.f12Regular).foregroundColor(.secondary)
                 }
             }
             if showsChevron {
@@ -161,7 +162,7 @@ public struct SectionHeader: View {
     public init(_ text: String) { self.text = text }
     public var body: some View {
         Text(text)
-            .font(.caption.weight(.semibold))
+            .font(Typography.f14SemiBold)
             .foregroundColor(.secondary)
             .padding(.horizontal, 4)
     }

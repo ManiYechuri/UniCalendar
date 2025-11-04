@@ -123,3 +123,21 @@ final class AccountStorage {
 
 }
 
+extension AccountStorage {
+    /// Delete all saved accounts from Core Data and broadcast update.
+    func nukeAll() {
+        context.performAndWait {
+            let fetch: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "AccountEntity")
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetch)
+            _ = try? context.execute(deleteRequest)
+            try? context.save()
+        }
+
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .accountsDidChange, object: nil)
+        }
+
+        print("🧨 Deleted all AccountEntity rows")
+    }
+}
+

@@ -8,62 +8,60 @@ final class SyncManager: ObservableObject {
     func refreshAllAccounts() {
         let accounts = AccountStorage.shared.connectedAccounts()
         let googleAccounts = accounts.filter { ($0.provider ?? "").lowercased() == "google" }
-
+        
         guard !googleAccounts.isEmpty else {
-            NotificationCenter.default.post(name: .syncDidFinish, object: nil)
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .syncDidFinish, object: nil)
+            }
             return
         }
-
-        NotificationCenter.default.post(name: .syncWillStart, object: nil)
-
+        
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: .syncWillStart, object: nil)
+        }
+        
         var pending = googleAccounts.count
         for acc in googleAccounts {
             refreshGoogleAccount(emailHint: acc.email?.lowercased()) {
                 pending -= 1
                 if pending == 0 {
-                    NotificationCenter.default.post(name: .syncDidFinish, object: nil)
-                    // Optionally: one final UI refresh ping
-                    NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
+                    DispatchQueue.main.async {
+                        NotificationCenter.default.post(name: .syncDidFinish, object: nil)
+                        NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
+                    }
                 }
             }
         }
     }
-    
+
     func pullLatest(completion: @escaping () -> Void) {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .syncWillStart, object: nil)
         }
-        
         GoogleAuthService.shared.deltaSync { email, items, deletedIDs in
             EventStorage.shared.upsertGoogleItems(accountEmail: email, items: items)
             EventStorage.shared.deleteExternalIDs(deletedIDs, accountEmail: email, provider: "google")
         } onComplete: { _, _ in
             DispatchQueue.main.async {
                 NotificationCenter.default.post(name: .syncDidFinish, object: nil)
+                completion()
             }
-            completion()
         }
     }
     
     func initialBackfill(completion: @escaping () -> Void) {
         let group = DispatchGroup()
-        var lastEmail = ""
-        
         group.enter()
         GoogleAuthService.shared.fetchLastThreeMonths { email, items in
-            lastEmail = email
-            EventStorage.shared.upsertGoogleItems(accountEmail: email, items: items)
+            EventStorage.shared.upsertGoogleItems(accountEmail: email.lowercased(), items: items)
         } onComplete: { _, _ in group.leave() }
-        
         group.enter()
         GoogleAuthService.shared.fetchRestOfYear { email, items in
-            lastEmail = email
-            EventStorage.shared.upsertGoogleItems(accountEmail: email, items: items)
+            EventStorage.shared.upsertGoogleItems(accountEmail: email.lowercased(), items: items)
         } onComplete: { _, _ in group.leave() }
-        
         group.notify(queue: .global()) {
             GoogleAuthService.shared.seedSyncToken { _, _ in
-                completion()
+                DispatchQueue.main.async { completion() }
             }
         }
     }
@@ -87,7 +85,7 @@ final class SyncManager: ObservableObject {
                         let accountEmail = emailFromSvc.lowercased()
                         EventStorage.shared.upsertGoogleItems(accountEmail: accountEmail, items: items)
                     }
-                    completion()
+                    DispatchQueue.main.async { completion() }
                 }
             )
             return

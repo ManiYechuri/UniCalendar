@@ -14,7 +14,7 @@ struct FilterPopupView: View {
                 Spacer()
                 Button(action: onClose) {
                     Image(systemName: "xmark")
-                        .font(.headline)
+                        .font(Typography.bodyMedium)
                 }
                 .buttonStyle(.plain)
             }

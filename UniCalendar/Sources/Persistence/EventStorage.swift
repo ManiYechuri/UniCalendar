@@ -176,7 +176,6 @@ final class EventStorage {
     private func mapToAppModel(_ entities: [EventEntity]) -> [CalendarEvent] {
         entities.compactMap { e in
             guard let start = e.start, let end = e.end else { return nil }
-            let attendees = AttendeesCodec.decode(e.attendeesData)
             return CalendarEvent(
                 title: e.title ?? "(No Title)",
                 location: e.location,

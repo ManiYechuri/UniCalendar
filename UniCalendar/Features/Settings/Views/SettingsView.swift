@@ -1,28 +1,26 @@
 import SwiftUI
 
 struct SettingsView: View {
-    // State
-    @State private var notificationsOn: Bool = true
+    @State private var notificationsOn: Bool = NotificationPrefs.isEnabled
     @State private var timing: ReminderTime = .min15
 
-    // Optional callbacks if you still need them elsewhere
     var onRefreshCalendar: (() -> Void)?
     var onClearCache: (() -> Void)?
     var onHelp: (() -> Void)?
     var onAbout: (() -> Void)?
     var onLogout: (() -> Void)?
 
+    @State private var showLogoutConfirm = false
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
                 VStack(alignment: .leading, spacing: 20) {
                     Text("Settings")
-                        .font(.system(size: 34, weight: .heavy))
+                        .font(Typography.h2)
 
-                    // ACCOUNT MANAGEMENT
                     SectionHeader("ACCOUNT MANAGEMENT")
                     SettingCard {
-                        // Push to SyncView
                         NavigationLink {
                             SyncView()
                         } label: {
@@ -38,7 +36,6 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                     }
 
-                    // NOTIFICATIONS
                     SectionHeader("NOTIFICATIONS")
                     SettingCard {
                         ToggleRow(
@@ -47,6 +44,14 @@ struct SettingsView: View {
                             title: "Event Notifications",
                             isOn: $notificationsOn
                         )
+                        .onChange(of: notificationsOn) { newValue in
+                            NotificationPrefs.setEnabled(newValue)
+                            if newValue {
+                                NotificationScheduler.shared.rescheduleAllUpcoming()
+                            } else {
+                                UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+                            }
+                        }
 
                         Divider().padding(.leading, 56)
 
@@ -65,50 +70,9 @@ struct SettingsView: View {
                         .buttonStyle(.plain)
                     }
 
-                    // DATA MANAGEMENT
-                    SectionHeader("DATA MANAGEMENT")
-                    SettingCard {
-                        SettingRow(
-                            icon: .init(systemName: "arrow.clockwise.circle"),
-                            iconTint: .blue,
-                            title: "Refresh Calendar Data",
-                            accessory: .chevron
-                        ) { onRefreshCalendar?() }
-
-                        Divider().padding(.leading, 56)
-
-                        SettingRow(
-                            icon: .init(systemName: "trash.circle"),
-                            iconTint: .yellow,
-                            title: "Clear Cache",
-                            accessory: .chevron
-                        ) { onClearCache?() }
-                    }
-
-                    // GENERAL
-                    SectionHeader("GENERAL")
-                    SettingCard {
-                        SettingRow(
-                            icon: .init(systemName: "questionmark.circle"),
-                            iconTint: .blue,
-                            title: "Help & Support",
-                            accessory: .chevron
-                        ) { onHelp?() }
-
-                        Divider().padding(.leading, 56)
-
-                        SettingRow(
-                            icon: .init(systemName: "info.circle"),
-                            iconTint: .gray,
-                            title: "About UniCal",
-                            accessory: .chevron
-                        ) { onAbout?() }
-                    }
-
-                    // LOG OUT
-                    Button(action: { onLogout?() }) {
+                    Button(role: .destructive, action: { showLogoutConfirm = true }) {
                         Text("Log Out")
-                            .font(.headline)
+                            .font(Typography.subheadline)
                             .foregroundColor(.red)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
@@ -120,6 +84,24 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
                     .padding(.top, 8)
+                    .confirmationDialog(
+                        "Are you sure you want to log out?",
+                        isPresented: $showLogoutConfirm,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Log Out") {
+                            performLogoutAndPurge()
+                            onLogout?()
+                        }
+                        .font(Typography.f14SemiBold)
+//                        Button("Cancel") {
+//                            
+//                        }
+//                        .font(Typography.f14SemiBold)
+                    } message: {
+                        Text("This will sign you out and remove all calendars, events, and sync data stored on this device.")
+                            .font(Typography.f12Regular)
+                    }
                 }
                 .padding(16)
                 .background(
@@ -135,6 +117,21 @@ struct SettingsView: View {
         .background(Color(.systemGroupedBackground).ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .navigationTitle("")
+        .onAppear {
+            notificationsOn = NotificationPrefs.isEnabled
+        }
+    }
+
+    private func performLogoutAndPurge() {
+        NotificationPrefs.setEnabled(false)
+
+        EventStorage.shared.nukeAll()
+        AccountStorage.shared.nukeAll()
+
+        GoogleAccountStore.shared.removeAllSyncTokens()
+        GoogleAuthService.shared.signOut()                
+        NotificationCenter.default.post(name: .accountsDidChange, object: nil)
+        NotificationCenter.default.post(name: .eventsDidUpdate, object: nil)
     }
 }
 

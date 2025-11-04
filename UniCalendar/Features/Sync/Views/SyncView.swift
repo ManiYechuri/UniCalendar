@@ -33,8 +33,10 @@ struct SyncView: View {
         }
         .alert("Limit reached", isPresented: $showLimitAlert, actions: {
             Button("OK", role: .cancel) {}
+                .font(Typography.f14SemiBold)
         }, message: {
             Text("You cannot connect more than 4 accounts.")
+                .font(Typography.f14SemiBold)
         })
     }
 }
@@ -61,7 +63,8 @@ private extension SyncView {
                                     accountPendingDisconnect = account
                                     showDisconnect = true
                                 } label: {
-                                    Label("Disconnect", systemImage: "link.badge.minus")
+                                    Text("Disconnect")
+                                        .font(Typography.f14SemiBold)
                                 }
                             }
                     }
@@ -87,16 +90,21 @@ private extension SyncView {
     }
 
     var emptyStateRow: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("No accounts connected").font(Typography.h1)
+        VStack(spacing: 12) {
+            Text("No accounts connected")
+                .font(Typography.h1)
+                .multilineTextAlignment(.center)
+            
             Text("Please click on the + button at the top to connect your Google account.")
                 .font(Typography.subheadline)
                 .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
         }
-        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
     }
 
-    // Centered title + trailing plus
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
         ToolbarItem(placement: .principal) {
@@ -107,7 +115,6 @@ private extension SyncView {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
                 if accounts.count >= MAX_ACCOUNTS {
-                    // Show limit message instead of opening the add popup
                     showLimitAlert = true
                 } else {
                     showAddSheet = true
@@ -121,7 +128,6 @@ private extension SyncView {
         }
     }
 
-    // MARK: Add Account Overlay (no setup screens)
     var addAccountOverlay: some View {
         Group {
             if showAddSheet {
@@ -161,7 +167,7 @@ private extension SyncView {
 
                 CenterAlertView(
                     title: "Disconnect Account?",
-                    message: disconnectMessage(), // includes the email
+                    message: disconnectMessage(),
                     cancelTitle: "Cancel",
                     destructiveTitle: "Disconnect",
                     onCancel: { dismissDisconnect() },
@@ -184,6 +190,7 @@ private extension SyncView {
 
 // MARK: - Actions / Data
 
+@MainActor
 private extension SyncView {
     func loadAccounts() {
         let entities = AccountStorage.shared.connectedAccounts()
@@ -198,20 +205,16 @@ private extension SyncView {
             do {
                 let user = try await GoogleAuthAdapter().signIn(presenting: presenter)
 
-                // Prevent over-limit just in case (race with alert)
                 guard accounts.count < MAX_ACCOUNTS else {
                     showLimitAlert = true
                     return
                 }
-
                 AccountStorage.shared.upsertAccount(
                     email: user.email,
                     provider: "google",
                     displayName: user.email
                 )
                 NotificationCenter.default.post(name: .accountsDidChange, object: nil)
-
-                // Kick a full sync pass (backfill or delta based on token)
                 SyncManager.shared.refreshAllAccounts()
             } catch {
                 print("Google connect failed:", error.localizedDescription)
